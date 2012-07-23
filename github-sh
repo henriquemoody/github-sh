@@ -1,0 +1,98 @@
+#!/usr/bin/env bash
+
+SCRIPT_PROMPT="github> "
+SCRIPT_HISTORY="${HOME}/.github-sh_history"
+
+declare -A commands=(
+	["help"]="Displays the help message."
+	["set"]="Defines a variable value."
+	["exit"]="Exit of Github Shell."
+)
+
+declare -A github_vars=(
+	["user"]=""
+	["password"]=""
+	["project"]=""
+)
+
+__internal_set()
+{
+	local label="${1}"
+	local value="${2}"
+
+	if [ "${label}" == "password" ] && [ "${value}" == "" ]
+	then
+		read -s -p "Type your password: " value
+		echo ""
+
+	elif [ "${value}" == "" ]
+	then
+		read -e -p "Value for ${label}: " value
+	fi
+
+	github_vars["${label}"]="${value}"
+
+	return 0
+}
+
+__external_help()
+{
+	for command_name in "${!commands[@]}"
+	do
+	    echo -e "${command_name}\t${commands[${command_name}]}"
+	done
+	echo ""
+}
+
+# set VAR [ VALUE ]
+__external_set()
+{
+	if [ -z "${1}" ]
+	then
+		for key in "${!github_vars[@]}"; do
+			value="${github_vars[${key}]}";
+			if [ ${key} == "password" ]
+			then
+				value=$(echo "${value}" | tr '[:print:]' '*')
+			fi
+		    echo "${key}: ${value}"
+		done
+		return 0
+	fi
+
+	__internal_set "${1}" "${2}" \
+		&& echo "Value of \"${1}\" defined with sucess."
+}
+
+while read -e -p "${SCRIPT_PROMPT}" input
+do
+	command_name=$(echo "${input}" | awk '{print $1}')
+	if [ "$(echo "${input}" | wc -w )" != 1 ]
+	then
+		command_args=$(echo "${input}" | cut -d ' ' -f 2-)
+	else
+		command_args=""
+	fi
+
+	case "${command_name}" in
+
+		set | issue | help)
+			__external_${command_name} ${command_args}
+		;;
+
+		exit)
+			echo "Bye!"
+			exit 0
+		;;
+
+		*)
+			echo "Command not found" 1>&2
+			continue
+		;;
+
+	esac
+
+	history -s "${input}"
+	echo "${input}" >> "${SCRIPT_HISTORY}"
+
+done
