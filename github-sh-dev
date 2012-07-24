@@ -8,15 +8,15 @@
 #
 # Changelog
 # =========
+#   1.0.1   Update script structure
 #   1.0.0   Base script
 #
 
-SCRIPT_NAME=$(basename "${0}")
-SCRIPT_DESCRIPTION=$(sed -n 2p "${0}" |  sed -r 's/^# ?//g')
-SCRIPT_VERSION=$(sed -n 11p "${0}" | awk '{print $2}')
-SCRIPT_PROMPT="github> "
-
-SCRIPT_HELP="Usage: ${SCRIPT_NAME} [OPTIONS]
+declare -x SCRIPT_NAME=$(basename "${0}")
+declare -x SCRIPT_DESCRIPTION=$(sed -n 2p "${0}" |  sed -r 's/^# ?//g')
+declare -x SCRIPT_VERSION=$(sed -n 11p "${0}" | awk '{print $2}')
+declare -x SCRIPT_PROMPT="github> "
+declare -x SCRIPT_HELP="Usage: ${SCRIPT_NAME} [OPTIONS]
 ${SCRIPT_DESCRIPTION}
 
     -h, --help      Displays this help.
@@ -26,11 +26,16 @@ ${SCRIPT_DESCRIPTION}
 
 Report bugs to: henriquemoody@gmail.com."
 
-# Internal functions
-source "inc/internal.sh"
+declare -A SCRIPT_VARS=(
+    ["user"]=""
+    ["password"]=""
+    ["project"]=""
+)
 
-# External functions
-source "inc/external.sh"
+source "src/internal/set.sh"
+source "src/external/issue.sh"
+source "src/external/set.sh"
+source "src/shell.sh"
 
 while [ "${1}" != "" ]
 do
@@ -50,7 +55,7 @@ do
             do
                 key="$(echo ${line} | cut -d '=' -f 1)"
                 value="$(echo ${line} | cut -d '=' -f 2-)"
-                __external_set "${key}" "${value}"
+                github_external_set "${key}" "${value}"
             done
 
         ;;
@@ -114,4 +119,4 @@ do
 
 done
 
-__shell
+github_shell

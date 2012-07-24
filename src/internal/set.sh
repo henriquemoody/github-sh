@@ -1,10 +1,4 @@
-declare -A github_vars=(
-    ["user"]=""
-    ["password"]=""
-    ["project"]=""
-)
-
-__internal_set()
+github_internal_set()
 {
     local label="${1}"
     local value="${2}"
@@ -19,7 +13,7 @@ __internal_set()
         read -e -p "Value for ${label}: " value
     fi
 
-    github_vars["${label}"]="${value}"
+    SCRIPT_VARS["${label}"]="${value}"
 
     return 0
 }
