@@ -12,11 +12,13 @@
 #   1.0.0   Base script
 #
 
-declare -x SCRIPT_NAME=$(basename "${0}")
-declare -x SCRIPT_DESCRIPTION=$(sed -n 2p "${0}" |  sed -r 's/^# ?//g')
-declare -x SCRIPT_VERSION=$(sed -n 11p "${0}" | awk '{print $2}')
-declare -x SCRIPT_PROMPT="github> "
-declare -x SCRIPT_HELP="Usage: ${SCRIPT_NAME} [OPTIONS]
+declare -r SCRIPT_NAME=$(basename "${0}")
+declare -r SCRIPT_DIRECTORY=$(dirname "${0}")
+declare -r SCRIPT_DESCRIPTION=$(sed -n 2p "${0}" |  sed -r 's/^# ?//g')
+declare -r SCRIPT_VERSION=$(sed -n 11p "${0}" | awk '{print $2}')
+declare -r SCRIPT_PROMPT="github> "
+declare -A SCRIPT_VARS=(["user"]="" ["password"]="" ["project"]="")
+declare -r SCRIPT_HELP="Usage: ${SCRIPT_NAME} [OPTIONS]
 ${SCRIPT_DESCRIPTION}
 
     -h, --help      Displays this help.
@@ -26,16 +28,10 @@ ${SCRIPT_DESCRIPTION}
 
 Report bugs to: henriquemoody@gmail.com."
 
-declare -A SCRIPT_VARS=(
-    ["user"]=""
-    ["password"]=""
-    ["project"]=""
-)
-
-source "src/internal/set.sh"
-source "src/external/issue.sh"
-source "src/external/set.sh"
-source "src/shell.sh"
+source "${SCRIPT_DIRECTORY}/src/internal/set.sh"
+source "${SCRIPT_DIRECTORY}/src/external/issue.sh"
+source "${SCRIPT_DIRECTORY}/src/external/set.sh"
+source "${SCRIPT_DIRECTORY}/src/shell.sh"
 
 while [ "${1}" != "" ]
 do
