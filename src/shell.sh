@@ -11,6 +11,8 @@ github_shell()
             command_args=""
         fi
 
+		history -s "${input}"
+
         case "${command_name}" in
 
             set | issue)
@@ -28,8 +30,6 @@ github_shell()
             ;;
 
         esac
-
-        history -s "${input}"
 
     done
 }
