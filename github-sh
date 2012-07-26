@@ -8,15 +8,17 @@
 #
 # Changelog
 # =========
+#   1.0.1   Update script structure
 #   1.0.0   Base script
 #
 
-SCRIPT_NAME=$(basename "${0}")
-SCRIPT_DESCRIPTION=$(sed -n 2p "${0}" |  sed -r 's/^# ?//g')
-SCRIPT_VERSION=$(sed -n 11p "${0}" | awk '{print $2}')
-SCRIPT_PROMPT="github> "
-
-SCRIPT_HELP="Usage: ${SCRIPT_NAME} [OPTIONS]
+declare -r SCRIPT_NAME=$(basename "${0}")
+declare -r SCRIPT_DIRECTORY=$(dirname "${0}")
+declare -r SCRIPT_DESCRIPTION=$(sed -n 2p "${0}" |  sed -r 's/^# ?//g')
+declare -r SCRIPT_VERSION=$(sed -n 11p "${0}" | awk '{print $2}')
+declare -r SCRIPT_PROMPT="github> "
+declare -A SCRIPT_VARS=(["user"]="" ["password"]="" ["project"]="")
+declare -r SCRIPT_HELP="Usage: ${SCRIPT_NAME} [OPTIONS]
 ${SCRIPT_DESCRIPTION}
 
     -h, --help      Displays this help.
@@ -26,14 +28,7 @@ ${SCRIPT_DESCRIPTION}
 
 Report bugs to: henriquemoody@gmail.com."
 
-# Internal functions
-declare -A github_vars=(
-    ["user"]=""
-    ["password"]=""
-    ["project"]=""
-)
-
-__internal_set()
+github_internal_set()
 {
     local label="${1}"
     local value="${2}"
@@ -48,46 +43,13 @@ __internal_set()
         read -e -p "Value for ${label}: " value
     fi
 
-    github_vars["${label}"]="${value}"
+    SCRIPT_VARS["${label}"]="${value}"
 
     return 0
 }
 
-# External functions
-SHELL_HELP="Usage: ${SCRIPT_NAME} [OPTIONS]
-${SCRIPT_DESCRIPTION}
-
-    help    Displays this help.
-
-    set     Defines default values for variables:
-                set VAR [ VALUE ]
-
-    issue   Displays information about an issue
-                issue NUMBER [ PROJECT [ USER ] ]
-"
-
-# set VAR [ VALUE ]
-__external_set()
-{
-    if [ -z "${1}" ]
-    then
-        for key in "${!github_vars[@]}"; do
-            value="${github_vars[${key}]}";
-            if [ ${key} == "password" ]
-            then
-                value=$(echo "${value}" | tr '[:print:]' '*')
-            fi
-            echo "${key}: ${value}"
-        done
-        return 0
-    fi
-
-    __internal_set "${1}" "${2}" \
-        && echo "Value of \"${1}\" defined with sucess."
-}
-
 # issue NUMBER [ PROJECT [ USER ] ]
-__external_issue()
+github_external_issue()
 {
     if [ -z "${1}" ]
     then
@@ -102,20 +64,20 @@ __external_issue()
 
     if [ -z "${project}" ]
     then
-        if [ -z ${github_vars["project"]} ]
+        if [ -z ${SCRIPT_VARS["project"]} ]
         then
-            __external_set project
+            github_external_set project
         fi
-        project="${github_vars["project"]}"
+        project="${SCRIPT_VARS["project"]}"
     fi
 
     if [ -z "${user}" ]
     then
-        if [ -z ${github_vars["user"]} ]
+        if [ -z ${SCRIPT_VARS["user"]} ]
         then
-            __external_set user
+            github_external_set user
         fi
-        user="${github_vars["user"]}"
+        user="${SCRIPT_VARS["user"]}"
     fi
 
     url="https://api.github.com/repos/${user}/${project}/issues/${number}/comments"
@@ -127,9 +89,27 @@ __external_issue()
     done
 
 }
+# set VAR [ VALUE ]
+github_external_set()
+{
+    if [ -z "${1}" ]
+    then
+        for key in "${!SCRIPT_VARS[@]}"; do
+            value="${SCRIPT_VARS[${key}]}";
+            if [ ${key} == "password" ]
+            then
+                value=$(echo "${value}" | tr '[:print:]' '*')
+            fi
+            echo "${key}: ${value}"
+        done
+        return 0
+    fi
 
+    github_internal_set "${1}" "${2}" \
+        && echo "Value of \"${1}\" defined with sucess."
+}
 # Github shell
-__shell()
+github_shell()
 {
     while read -e -p "${SCRIPT_PROMPT}" input
     do
@@ -141,19 +121,16 @@ __shell()
             command_args=""
         fi
 
+		history -s "${input}"
+
         case "${command_name}" in
 
             set | issue)
-                __external_${command_name} ${command_args}
+                github_external_${command_name} ${command_args}
             ;;
 
             exit)
                 echo "Bye!"
-                exit 0
-            ;;
-
-            help)
-                echo "${SHELL_HELP}"
                 exit 0
             ;;
 
@@ -164,10 +141,9 @@ __shell()
 
         esac
 
-        history -s "${input}"
-
     done
 }
+
 
 while [ "${1}" != "" ]
 do
@@ -187,7 +163,7 @@ do
             do
                 key="$(echo ${line} | cut -d '=' -f 1)"
                 value="$(echo ${line} | cut -d '=' -f 2-)"
-                __external_set "${key}" "${value}"
+                github_external_set "${key}" "${value}"
             done
 
         ;;
@@ -251,4 +227,4 @@ do
 
 done
 
-__shell
+github_shell

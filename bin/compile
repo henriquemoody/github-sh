@@ -1,0 +1,23 @@
+#!/usr/bin/env php
+<?php
+call_user_func_array(function () {
+
+    $dev_script         = __DIR__ . '/../github-sh-dev';
+    $dev_script_content = file_get_contents($dev_script);
+
+    $pro_script         = __DIR__ . '/../github-sh';
+    $pro_script_content = preg_replace_callback(
+        '/source "\${SCRIPT_DIRECTORY}\/(?P<source>.+)"/', 
+        function ($match)
+        {
+            $source_script          = __DIR__ . '/../' . $match['source'];
+            $source_script_content  = file_get_contents($source_script);
+
+            return $source_script_content;
+        }, 
+        $dev_script_content
+    );
+
+    file_put_contents($pro_script, $pro_script_content);
+
+}, $_SERVER['argv']);
