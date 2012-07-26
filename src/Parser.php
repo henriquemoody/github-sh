@@ -13,7 +13,7 @@ class Parser{
 	public function parse($stringcmd)
 	{
 		$parts = explode (" ", $stringcmd);
-		$cmd = new StdClass;
+		$cmd = new \StdClass;
 		$cmd->command = array_shift($parts);
 		$cmd->parameters = $parts;
 		return $cmd;
