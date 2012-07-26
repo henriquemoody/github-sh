@@ -11,7 +11,7 @@ class GitHub{
 	}
 	public function goodbye()
 	{
-		require 'src/randomthought.php';
+		require __DIR__ . '/randomthought.php';
 		$rid = array_rand($thought,1);
 		echo "Good By.\nand never forgot:\t'{$thought[$rid]}'.\n\n ";
 		exit(0);
