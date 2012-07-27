@@ -10,7 +10,7 @@ $parser = new GitHub\Parser;
 $exec   = new GitHub\Executor;
 $github = new GitHub\GitHub;
 
-$exec->doCmd( $github->isValid($parser->parse("hello")));
+echo $exec->doCmd( $github->isValid($parser->parse("hello")));
 
 // The terminal CMD
 do{
