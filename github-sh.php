@@ -14,8 +14,13 @@ $exec->doCmd( $github->isValid($parser->parse("hello")));
 
 // The terminal CMD
 do{
+    $username = $github->get('username');
+    $username = (!is_null($username))?"/".$username:"";
+    $project  = $github->get('project');
+    $project  = (!is_null($project))?"/".$project:"";
 
-    $buf = readline("github> ");
+
+    $buf = readline("github{$username}{$project}> ");
     readline_add_history($buf);
     $cmd = $parser->parse($buf);
     $github->isValid($cmd);
