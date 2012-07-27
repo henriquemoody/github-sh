@@ -14,6 +14,9 @@ At this time the project have:
 	
 	- issue [id]
 		this show single data about one issue.
+	- history
+		we use readline to get history in session and between it(hello->tchau->hello)
+
 TODO
 ====
 	- Error handler for API Client requests
@@ -41,6 +44,12 @@ TODO
 	
 	- Validate Data Provided for a action and if haven't the necessary
 		request using readline.			
+	
+	- create a Class to implement History
+		need rotate lines.
+		need auto-complete/ suggests
+		need handle with readline_list_history not exists(not compiled)
+
 How to Use
 ==========
 	Clone the project
