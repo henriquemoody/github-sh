@@ -56,6 +56,7 @@ TODO
 
 	- use session branch data to handle with branchs on github.
 		and make it part of prompt.
+
 		
 How to Use
 ==========
@@ -74,4 +75,10 @@ How to Use
 	yes, its small things but we are working to add more commands soon.
 
 	cheers.
+
+
+
+related Gists
+=============
+* issue / issues (how it will work) https://gist.github.com/3190502
 
