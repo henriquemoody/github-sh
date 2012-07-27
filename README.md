@@ -11,9 +11,11 @@ At this time the project have:
    * set session data
       * set username [githubusername]
       * set project  [projectname]
+	  * set branch   [branchname]
    * get session data
       * get username
       * get project
+	  * get branch
    * issue [id]
       * this show single data about one issue.
    * history
@@ -52,6 +54,9 @@ TODO
 		need auto-complete/ suggests
 		need handle with readline_list_history not exists(not compiled)
 
+	- use session branch data to handle with branchs on github.
+		and make it part of prompt.
+		
 How to Use
 ==========
 	Clone the project
