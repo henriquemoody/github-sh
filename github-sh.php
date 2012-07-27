@@ -22,7 +22,7 @@ do{
     if ( $cmd->isValid) {
         $cmd = $exec->doCmd($cmd);
         if(is_string($cmd)) {
-            echo $cmd;
+            echo $cmd."\n";
         }
     } else {
         echo "invalid gitHub Command.\n";
