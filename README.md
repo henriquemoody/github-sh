@@ -60,6 +60,8 @@ TODO
 How to Use
 ==========
 	Clone the project
+	change branch to php-version
+	pull the files.
 	verify if php path is right in github-sh.php
 	verify if github-sh.php is execlutable
 	run ./github-sh.php and your have a prompt
