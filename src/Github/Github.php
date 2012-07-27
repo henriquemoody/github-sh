@@ -1,5 +1,6 @@
 <?php
 namespace Github;
+
 class Github
 {
     private $user;
