@@ -4,7 +4,13 @@
 /* Error reporting */
 error_reporting(E_ALL | E_STRICT);
 
-/* Timezone */
+$history_file = $_SERVER['HOME'].'/.github-sh-history';
+# read history from previous session
+if(is_file($history_file))
+	  readline_read_history($history_file);
+else
+	  fclose(fopen($history_file, 'w'));
+
 require 'bootstrap.php';
 $parser = new GitHub\Parser;
 $exec   = new GitHub\Executor;
@@ -34,4 +40,6 @@ do{
     }
 
 } while($buf != "tchau");
+readline_write_history($history_file); 
+
 $exec->doCmd( $github->isValid($parser->parse("goodbye")));
