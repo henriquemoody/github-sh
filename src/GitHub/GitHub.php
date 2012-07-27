@@ -3,9 +3,8 @@ namespace GitHub;
 
 class GitHub
 {
-    private $user;
-    private $pass;
-    private $project;
+    private static $username;
+    private static $project;
     public function hello()
     {
         return 'Hello. My Name is github-sh' . PHP_EOL
@@ -31,6 +30,8 @@ class GitHub
         ,'goodbye'=> array('class'=>'GitHub\GitHub', 'method'=>'goodbye')
         ,'tchau'=> array('class'=>'GitHub\GitHub', 'method'=>'goodbye')
         ,'exit'=> array('class'=>'GitHub\GitHub', 'method'=>'goodbye')
+        ,'set'=> array('class'=>'GitHub\GitHub', 'method'=>'set')
+        ,'get'=> array('class'=>'GitHub\GitHub', 'method'=>'get')
         );
         $cmd->isValid = array_key_exists($cmd->command, $whatcan);
         if ($cmd->isValid) {
@@ -40,6 +41,24 @@ class GitHub
         }
 
         return $cmd;
+    }
+
+    public function set($property, $value)
+    {
+        if (in_array($property, array('username','project'))) {
+            self::$$property = $value;
+            return "set github.{$property} = {$value}";
+        }
+
+        return "property {$property} not valid";
+    }
+    public function get($property)
+    {
+        if(!property_exists($this, $property))
+        {
+            return "property github.{$property} don't exist.";
+        }
+        return "github.{$property} = ".self::$$property;
     }
 
 }
