@@ -47,7 +47,7 @@ class GitHub
     {
         if (in_array($property, array('username','project'))) {
             self::$$property = $value;
-            return "set github.{$property} = {$value}";
+            return $value;
         }
 
         return "property {$property} not valid";
@@ -58,7 +58,7 @@ class GitHub
         {
             return "property github.{$property} don't exist.";
         }
-        return "github.{$property} = ".self::$$property;
+        return self::$$property;
     }
 
 }
