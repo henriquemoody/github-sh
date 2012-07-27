@@ -1,5 +1,5 @@
 <?php
-namespace Github;
+namespace GitHub;
 
 /**
  * Parser

@@ -1,21 +1,28 @@
 <?php
-namespace Github;
+namespace GitHub;
 
-class Github
+class GitHub
 {
     private $user;
     private $pass;
     private $project;
     public function hello()
     {
-        echo "Hello. My Name is github-sh\n I born to help you with LE-ZE-RA to access the browser.\nIf its our first meet, in doubt, please ask me for help. Ops, I almost forgot to introduce myself.\n the unoccupied person behind me are:\n\thenrique Moody <henriquemoody@gmail.com> (creator) \n\tIvo nascimento <iannsp@gmail.com> (the helper).\nHaving Fun!!\n\n";
+        echo 'Hello. My Name is github-sh' . PHP_EOL
+            .'I born to help you with LE-ZE-RA to access the browser.' . PHP_EOL
+            .'If its our first meet, in doubt, please ask me for help.' . PHP_EOL
+            .'Ops, I almost forgot to introduce myself.' . PHP_EOL
+            .'The unoccupied person behind me are:' . PHP_EOL
+            .'    Henrique Moody <henriquemoody@gmail.com> (creator)' . PHP_EOL
+            .'    Ivo nascimento <iannsp@gmail.com> (the helper).' . PHP_EOL
+            .'Having Fun!!' . PHP_EOL . PHP_EOL;
 
     }
     public function goodbye()
     {
         require __DIR__ . '/randomthought.php';
         $rid = array_rand($thought,1);
-        echo "Good By.\nand never forgot:\t'{$thought[$rid]}'.\n\n ";
+        echo "Good By.\nand never forgot:\t'{$thought[$rid]}'.\n\n";
         exit(0);
     }
     public function isValid(\StdClass $cmd)
