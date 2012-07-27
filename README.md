@@ -11,7 +11,9 @@ At this time the project have:
 	- get session data
 		get username
 		get project
-
+	
+	- issue [id]
+		this show single data about one issue.
 TODO
 ====
 	- Error handler for API Client requests
@@ -36,7 +38,9 @@ TODO
 				- git push
 				- git status
 				- git commit
-			
+	
+	- Validate Data Provided for a action and if haven't the necessary
+		request using readline.			
 How to Use
 ==========
 	Clone the project
