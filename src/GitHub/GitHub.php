@@ -8,7 +8,7 @@ class GitHub
     private $project;
     public function hello()
     {
-        echo 'Hello. My Name is github-sh' . PHP_EOL
+        return 'Hello. My Name is github-sh' . PHP_EOL
             .'I born to help you with LE-ZE-RA to access the browser.' . PHP_EOL
             .'If its our first meet, in doubt, please ask me for help.' . PHP_EOL
             .'Ops, I almost forgot to introduce myself.' . PHP_EOL
@@ -22,8 +22,7 @@ class GitHub
     {
         require __DIR__ . '/randomthought.php';
         $rid = array_rand($thought,1);
-        echo "Good By.\nand never forgot:\t'{$thought[$rid]}'.\n\n";
-        exit(0);
+        return "Good By.\nand never forgot:\t'{$thought[$rid]}'.\n\n";
     }
     public function isValid(\StdClass $cmd)
     {
