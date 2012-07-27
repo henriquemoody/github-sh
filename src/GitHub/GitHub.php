@@ -5,6 +5,7 @@ class GitHub
 {
     private static $username;
     private static $project;
+	private static $branch = 'master';
     public function hello()
     {
         return 'Hello. My Name is github-sh' . PHP_EOL
@@ -32,6 +33,7 @@ class GitHub
         ,'exit'=> array('class'=>'GitHub\GitHub', 'method'=>'goodbye')
         ,'set'=> array('class'=>'GitHub\GitHub', 'method'=>'set')
         ,'get'=> array('class'=>'GitHub\GitHub', 'method'=>'get')
+        ,'issue'=> array('class'=>'GitHub\Command\Issue', 'method'=>'__get')
         );
         $cmd->isValid = array_key_exists($cmd->command, $whatcan);
         if ($cmd->isValid) {
@@ -45,7 +47,7 @@ class GitHub
 
     public function set($property, $value)
     {
-        if (in_array($property, array('username','project'))) {
+        if (in_array($property, array('username','project','branch'))) {
             self::$$property = $value;
             return $value;
         }
