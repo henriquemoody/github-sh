@@ -37,5 +37,19 @@ TODO
 				- git status
 				- git commit
 			
+How to Use
+==========
+	Clone the project
+	verify if php path is right in github-sh.php
+	verify if github-sh.php is execlutable
+	run ./github-sh.php and your have a prompt
+	github>
+	github>set username henriquemoody
+	github/henriquemoody>set project github-sh 
+	github/henriquemoody/github-sh> hello
+	github/henriquemoody/github-sh> tchau
 
-PHP Version.
+	yes, its small things but we are working to add more commands soon.
+
+	cheers.
+
