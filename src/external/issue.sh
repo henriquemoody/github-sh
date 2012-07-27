@@ -1,4 +1,4 @@
-# issue NUMBER [ PROJECT [ USER ] ]
+# github_external_issue NUMBER [ PROJECT [ USER ] ]
 github_external_issue()
 {
     if [ -z "${1}" ]

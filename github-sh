@@ -8,16 +8,19 @@
 #
 # Changelog
 # =========
+#   1.0.2   Created OSX compatibility
 #   1.0.1   Update script structure
 #   1.0.0   Base script
 #
 
 declare -r SCRIPT_NAME=$(basename "${0}")
 declare -r SCRIPT_DIRECTORY=$(dirname "${0}")
-declare -r SCRIPT_DESCRIPTION=$(sed -n 2p "${0}" |  sed -r 's/^# ?//g')
+declare -r SCRIPT_DESCRIPTION=$(sed -n 2p "${0}" |  sed -E 's/^# ?//g')
 declare -r SCRIPT_VERSION=$(sed -n 11p "${0}" | awk '{print $2}')
 declare -r SCRIPT_PROMPT="github> "
-declare -A SCRIPT_VARS=(["user"]="" ["password"]="" ["project"]="")
+declare SCRIPT_VAR_USER=""
+declare SCRIPT_VAR_PASS=""
+declare SCRIPT_VAR_PROJ=""
 declare -r SCRIPT_HELP="Usage: ${SCRIPT_NAME} [OPTIONS]
 ${SCRIPT_DESCRIPTION}
 
@@ -28,6 +31,27 @@ ${SCRIPT_DESCRIPTION}
 
 Report bugs to: henriquemoody@gmail.com."
 
+# github_internal_echo MESSAGE [COLOR [DECORATION]] 
+github_internal_echo()
+{
+    local message="${1}"
+    local color="${2}"
+    local decoration="${3}"
+
+    if [ "${color}" == "" ]
+    then
+       color=0
+    fi
+
+    if [ "${decoration}" == "" ]
+    then
+        decoration="normal"
+    fi
+
+    echo -e "\033[${color}m${message}\033[0m"
+
+}
+# github_internal_set VARIABLE [ VALUE ]
 github_internal_set()
 {
     local label="${1}"
@@ -43,12 +67,30 @@ github_internal_set()
         read -e -p "Value for ${label}: " value
     fi
 
-    SCRIPT_VARS["${label}"]="${value}"
+    case "${label}" in 
+
+        user)
+            SCRIPT_VAR_USER="${value}"
+        ;;
+
+        password)
+            SCRIPT_VAR_PASS="${value}"
+        ;;
+
+        project)
+            SCRIPT_VAR_PROJ="${value}"
+        ;;
+
+        *)
+          github_internal_echo "Invalid variable \"${label}\"." 31
+          return 2
+
+    esac
 
     return 0
 }
 
-# issue NUMBER [ PROJECT [ USER ] ]
+# github_external_issue NUMBER [ PROJECT [ USER ] ]
 github_external_issue()
 {
     if [ -z "${1}" ]
@@ -89,32 +131,46 @@ github_external_issue()
     done
 
 }
-# set VAR [ VALUE ]
+# github_external_set VAR [ VALUE ]
 github_external_set()
 {
     if [ -z "${1}" ]
     then
-        for key in "${!SCRIPT_VARS[@]}"; do
-            value="${SCRIPT_VARS[${key}]}";
-            if [ ${key} == "password" ]
-            then
-                value=$(echo "${value}" | tr '[:print:]' '*')
-            fi
-            echo "${key}: ${value}"
-        done
+        github_internal_echo "user:      \c" 34
+        github_internal_echo "${SCRIPT_VAR_USER}" 32 \
+            || github_internal_echo "NULL" 31
+
+        local password=$(echo ${SCRIPT_VAR_PASS} | tr '[:alnum:]' '*')
+        github_internal_echo "password:  \c" 34
+        github_internal_echo "${password}" 32 \
+            || github_internal_echo "NULL" 31
+
+        github_internal_echo "project:   \c" 34
+        github_internal_echo "${SCRIPT_VAR_PROJ}" 32 \
+            || github_internal_echo "NULL" 31
+
         return 0
     fi
 
     github_internal_set "${1}" "${2}" \
-        && echo "Value of \"${1}\" defined with sucess."
+        && github_internal_echo "Value of \"${1}\" defined with sucess." 32
 }
-# Github shell
+# github_shell
 github_shell()
 {
+    github_internal_echo "Welcome to Github Shell - ${SCRIPT_VERSION}" 32
+    github_internal_echo "${SCRIPT_DESCRIPTION}\n"
+
     while read -e -p "${SCRIPT_PROMPT}" input
     do
+
+        if [ "${input}" == "" ]
+        then
+            continue
+        fi
+
         command_name=$(echo "${input}" | awk '{print $1}')
-        if [ "$(echo "${input}" | wc -w )" != 1 ]
+        if [ "$(echo "${input}" | wc -w | awk '{print $1}')" != 1 ]
         then
             command_args=$(echo "${input}" | cut -d ' ' -f 2-)
         else
@@ -125,17 +181,12 @@ github_shell()
 
         case "${command_name}" in
 
-            set | issue)
+            set | issue | exit)
                 github_external_${command_name} ${command_args}
             ;;
 
-            exit)
-                echo "Bye!"
-                exit 0
-            ;;
-
             *)
-                echo "Command not found" 1>&2
+                github_internal_echo "Command \"${command_name}\" not found." 31 1>&2
                 continue
             ;;
 
@@ -152,7 +203,7 @@ do
 
         -h | --help)
 
-            echo "${SCRIPT_HELP}"
+            github_internal_echo "${SCRIPT_HELP}"
             exit 0
 
         ;;
@@ -170,15 +221,15 @@ do
 
         -V)
 
-            echo "${SCRIPT_VERSION}"
+            github_internal_echo "${SCRIPT_VERSION}"
             exit 0
 
         ;;
 
         -v | --version)
 
-            echo "${SCRIPT_NAME} version ${SCRIPT_VERSION}"
-            echo "${SCRIPT_DESCRIPTION}"
+            github_internal_echo "${SCRIPT_NAME} version ${SCRIPT_VERSION}"
+            github_internal_echo "${SCRIPT_DESCRIPTION}"
             exit 0
 
         ;;
@@ -192,21 +243,21 @@ do
             HEAD_VERSION=$(${TEMPORARY} -V)
             if [ "${HEAD_VERSION}" ==  "${SCRIPT_VERSION}" ]
             then
-                echo "Nothing to update."
-                echo "The last version of ${SCRIPT_NAME} is ${HEAD_VERSION}."
+                github_internal_echo "Nothing to update." 32
+                github_internal_echo "The last version of ${SCRIPT_NAME} is ${HEAD_VERSION}."
                 rm -f ${TEMPORARY}
                 exit 0
             fi
 
             if [ ! -w "${0}" ]
             then
-                echo "You don't have permission to update ${SCRIPT_NAME}." 1>&2
+                github_internal_echo "You don't have permission to update ${SCRIPT_NAME}." 31 1>&2
                 rm -f ${TEMPORARY}
                 exit 3
             fi
 
             mv ${TEMPORARY} "${0}"
-            echo "Successfully updated of ${SCRIPT_VERSION} to ${HEAD_VERSION}"
+            github_internal_echo "Successfully updated of ${SCRIPT_VERSION} to ${HEAD_VERSION}" 32
             exit 0
 
         ;;
@@ -215,7 +266,7 @@ do
 
             if [ "${1}" != "" ]
             then
-                echo "${SCRIPT_HELP_MESSAGE}" 1>&2
+                github_internal_echo "${SCRIPT_HELP_MESSAGE}" 1>&2
                 exit 2
             fi
 
