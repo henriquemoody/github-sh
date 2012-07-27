@@ -21,9 +21,12 @@ do{
     $github->isValid($cmd);
     if ( $cmd->isValid) {
         $cmd = $exec->doCmd($cmd);
+        if(is_string($cmd)) {
+            echo $cmd;
+        }
     } else {
         echo "invalid gitHub Command.\n";
     }
 
-} while(true);
+} while($buf != "tchau");
 $exec->doCmd( $github->isValid($parser->parse("goodbye")));
