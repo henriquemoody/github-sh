@@ -52,10 +52,13 @@ github_external_issue()
         extra_param="-u '${extra_param}'"
     fi
 
-    curl "${extra_param}" -L "${url}" | grep "body" | cut -d "\"" -f 4 | while read line 
+    curl "${extra_param}" -L "${url}" \
+        | grep body \
+        | cut -d '"' -f 4- \
+        | awk '{ gsub(/\\n/, "\n"); print }' \
+        | while read line 
     do
         echo "${line}"
-        echo
     done
 
 }
