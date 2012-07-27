@@ -11,8 +11,9 @@ class ParserTest extends PHPUnit_Framework_TestCase
      */
     public function testParse($cmd, $expected)
     {
+        $cmdexpected = explode(' ', $cmd);
         $parsed = $this->parser->parse($cmd[0]);        
-        $this->AssertEquals($cmd, $expected[0]);
+        $this->AssertEquals($cmdexpected[0], $expected[0]);
     }
     public function testParseDataProvider()
     {
