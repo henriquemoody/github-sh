@@ -1,21 +1,22 @@
 <?php
 
-namespace GitHub;
+namespace Github;
 
 /**
- * Parser 
- * 
- * @package github 
- * @author Ivo Nascimento <iannsp@gmail.com> 
+ * Parser
+ *
+ * @package github
+ * @author Ivo Nascimento <iannsp@gmail.com>
  */
-class Parser{
+class Parser
+{
+    public function parse($stringcmd)
+    {
+        $parts = explode (" ", $stringcmd);
+        $cmd = new \StdClass;
+        $cmd->command = array_shift($parts);
+        $cmd->parameters = $parts;
 
-	public function parse($stringcmd)
-	{
-		$parts = explode (" ", $stringcmd);
-		$cmd = new \StdClass;
-		$cmd->command = array_shift($parts);
-		$cmd->parameters = $parts;
-		return $cmd;
-	}
+        return $cmd;
+    }
 }
