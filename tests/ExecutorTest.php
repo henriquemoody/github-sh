@@ -23,6 +23,12 @@ class ExecutorTest extends PHPUnit_Framework_TestCase
       
       $result = $this->executor->doCmd( $this->github->isValid($this->parser->parse("hello")));
       $this->assertEquals($expected, $result);
+    }
+    public function testTchauLilika()
+    {
 
+      $result = $this->executor->doCmd( $this->github->isValid($this->parser->parse("tchau")));
+      $this->assertStringStartsWith("Good By.\nand never forgot:", $result);
+        
     }
 }
