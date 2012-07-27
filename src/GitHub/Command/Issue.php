@@ -17,7 +17,8 @@ class Issue extends Command
 	{
 			$result = $this->cApi->fetchUriData("https://api.github.com/repos/{$this->username}/{$this->project}/issues/{$id}");
 			$data =  json_decode($result);
-			var_dump($data);
-			return "aaa";
+			$presentation = new \GitHub\Presentation\Basic();
+			$presentation->set('issuedata', $data);
+			return $presentation->show();
 	}
 }
