@@ -1,21 +1,22 @@
-Github Shell
-============
+Github Shell (php version)
+==========================
 Its a implementation of github services into terminal.
+
 At this time the project have:
-	- the structure to support GitHub Api (v3).
-	- hello
-	- exit|tchau
-	- set session data
-		set username [githubusername]
-		set project  [projectname]
-	- get session data
-		get username
-		get project
-	
-	- issue [id]
-		this show single data about one issue.
-	- history
-		we use readline to get history in session and between it(hello->tchau->hello)
+
+- the structure to support GitHub Api (v3).
+- hello
+- exit|tchau
+- set session data
+-- set username [githubusername]
+-- set project  [projectname]
+- get session data
+-- get username
+-- get project
+- issue [id]
+-- this show single data about one issue.
+- history
+-- we use readline to get history in session and between it(hello->tchau->hello)
 
 TODO
 ====
