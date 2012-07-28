@@ -4,16 +4,16 @@ github_external_set()
     if [ -z "${1}" ]
     then
         github_internal_echo "user:      \c" 34
-        github_internal_echo "${SCRIPT_VAR_USER}" 32 \
+        github_internal_echo "${GITHUB_USERNAME}" 32 \
             || github_internal_echo "NULL" 31
 
-        local password=$(echo ${SCRIPT_VAR_PASS} | tr '[:alnum:]' '*')
+        local password=$(echo ${GITHUB_PASSWORD} | tr '[:alnum:]' '*')
         github_internal_echo "password:  \c" 34
         github_internal_echo "${password}" 32 \
             || github_internal_echo "NULL" 31
 
         github_internal_echo "project:   \c" 34
-        github_internal_echo "${SCRIPT_VAR_PROJ}" 32 \
+        github_internal_echo "${GITHUB_PROJECT}" 32 \
             || github_internal_echo "NULL" 31
 
         return 0

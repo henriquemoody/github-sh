@@ -32,10 +32,10 @@ ${SCRIPT_DESCRIPTION}
 Report bugs to: henriquemoody@gmail.com."
 
 # Global vars
-declare SCRIPT_VAR_PROMPT="${SCRIPT_PROMPT}${SCRIPT_PROMPT_CHAR}"
-declare SCRIPT_VAR_USER=""
-declare SCRIPT_VAR_PASS=""
-declare SCRIPT_VAR_PROJ=""
+declare GITHUB_PROMPT="${SCRIPT_PROMPT}${SCRIPT_PROMPT_CHAR}"
+declare GITHUB_USERNAME=""
+declare GITHUB_PASSWORD=""
+declare GITHUB_PROJECT=""
 
 source "${SCRIPT_DIRECTORY}/src/internal/echo.sh"
 source "${SCRIPT_DIRECTORY}/src/internal/set.sh"

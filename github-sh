@@ -8,19 +8,19 @@
 #
 # Changelog
 # =========
+#   1.0.2   Update prompt with defined user data.
 #   1.0.2   Created OSX compatibility
 #   1.0.1   Update script structure
 #   1.0.0   Base script
 #
 
+# Readonly vars
 declare -r SCRIPT_NAME=$(basename "${0}")
 declare -r SCRIPT_DIRECTORY=$(dirname "${0}")
 declare -r SCRIPT_DESCRIPTION=$(sed -n 2p "${0}" |  sed -E 's/^# ?//g')
 declare -r SCRIPT_VERSION=$(sed -n 11p "${0}" | awk '{print $2}')
-declare -r SCRIPT_PROMPT="github> "
-declare SCRIPT_VAR_USER=""
-declare SCRIPT_VAR_PASS=""
-declare SCRIPT_VAR_PROJ=""
+declare -r SCRIPT_PROMPT="github"
+declare -r SCRIPT_PROMPT_CHAR="> "
 declare -r SCRIPT_HELP="Usage: ${SCRIPT_NAME} [OPTIONS]
 ${SCRIPT_DESCRIPTION}
 
@@ -30,6 +30,12 @@ ${SCRIPT_DESCRIPTION}
     -u, --update    Self update ${SCRIPT_NAME}.
 
 Report bugs to: henriquemoody@gmail.com."
+
+# Global vars
+declare GITHUB_PROMPT="${SCRIPT_PROMPT}${SCRIPT_PROMPT_CHAR}"
+declare GITHUB_USERNAME=""
+declare GITHUB_PASSWORD=""
+declare GITHUB_PROJECT=""
 
 # github_internal_echo MESSAGE [COLOR [DECORATION]] 
 github_internal_echo()
@@ -51,127 +57,153 @@ github_internal_echo()
     echo -e "\033[${color}m${message}\033[0m"
 
 }
+
 # github_internal_set VARIABLE [ VALUE ]
 github_internal_set()
 {
     local label="${1}"
     local value="${2}"
 
-    if [ "${label}" == "password" ] && [ "${value}" == "" ]
-    then
+    if [ "${label}" == "password" ] && [ "${value}" == "" ]; then
         read -s -p "Type your password: " value
         echo ""
-
-    elif [ "${value}" == "" ]
-    then
+    elif [ "${value}" == "" ]; then
         read -e -p "Value for ${label}: " value
     fi
 
     case "${label}" in 
 
         user)
-            SCRIPT_VAR_USER="${value}"
+            GITHUB_USERNAME="${value}"
         ;;
 
         password)
-            SCRIPT_VAR_PASS="${value}"
+            GITHUB_PASSWORD="${value}"
         ;;
 
         project)
-            SCRIPT_VAR_PROJ="${value}"
+            GITHUB_PROJECT="${value}"
         ;;
 
         *)
-          github_internal_echo "Invalid variable \"${label}\"." 31
+          github_internal_echo "Invalid variable \"${label}\".\n" 31
           return 2
 
     esac
 
+    GITHUB_PROMPT="${SCRIPT_PROMPT}"
+    if [ ! -z "${GITHUB_PROJECT}" ]; then
+        GITHUB_PROMPT="${GITHUB_PROJECT}"
+    fi
+    GITHUB_PROMPT="${GITHUB_PROMPT}${SCRIPT_PROMPT_CHAR}"
+
     return 0
 }
 
-# github_external_issue NUMBER [ PROJECT [ USER ] ]
+# github_external_issue ACTION NUMBER [ PROJECT [ USER ] ]
 github_external_issue()
 {
     if [ -z "${1}" ]
     then
-        echo "You should define a issue number. (See \"help\" for more information)" 
+        github_internal_echo "You should define a issue action. (See \"help\" for more information)" 31 1>&2
         return 2
     fi
 
-    local number="${1}"
-    local project="${2}"
-    local user="${3}"
+    if [ -z "${2}" ]
+    then
+        github_internal_echo "You should define a issue number. (See \"help\" for more information)" 31 1>&2
+        return 3
+    fi
+
+    local action="${1}"
+    local number="${2}"
+    local project="${3}"
+    local user="${4}"
+    local extra_param=""
     local url
 
     if [ -z "${project}" ]
     then
-        if [ -z ${SCRIPT_VARS["project"]} ]
+        if [ -z "${GITHUB_PROJECT}" ]
         then
-            github_external_set project
+            read -e -p "Project name: " project
+        else
+            project="${GITHUB_PROJECT}"
         fi
-        project="${SCRIPT_VARS["project"]}"
     fi
 
     if [ -z "${user}" ]
     then
-        if [ -z ${SCRIPT_VARS["user"]} ]
+        if [ -z "${GITHUB_USERNAME}" ]
         then
-            github_external_set user
+            read -e -p "User or Organization: " project
+        else
+            user="${GITHUB_USERNAME}"
         fi
-        user="${SCRIPT_VARS["user"]}"
     fi
 
     url="https://api.github.com/repos/${user}/${project}/issues/${number}/comments"
-    echo $url
-    curl -L "${url}" | grep "body" | cut -d "\"" -f 4 | while read line 
+
+    if [ "${GITHUB_USERNAME}" != "" ]
+    then
+        extra_param="${GITHUB_USERNAME}"
+        if [ "${GITHUB_PASSWORD}" != "" ]
+        then
+            extra_param="${extra_param}:${GITHUB_PASSWORD}"
+        fi
+        extra_param="-u '${extra_param}'"
+    fi
+
+    curl "${extra_param}" -L "${url}" \
+        | grep body \
+        | cut -d '"' -f 4- \
+        | awk '{ gsub(/\\n/, "\n"); print }' \
+        | while read line 
     do
         echo "${line}"
-        echo
     done
 
 }
+
 # github_external_set VAR [ VALUE ]
 github_external_set()
 {
     if [ -z "${1}" ]
     then
         github_internal_echo "user:      \c" 34
-        github_internal_echo "${SCRIPT_VAR_USER}" 32 \
+        github_internal_echo "${GITHUB_USERNAME}" 32 \
             || github_internal_echo "NULL" 31
 
-        local password=$(echo ${SCRIPT_VAR_PASS} | tr '[:alnum:]' '*')
+        local password=$(echo ${GITHUB_PASSWORD} | tr '[:alnum:]' '*')
         github_internal_echo "password:  \c" 34
         github_internal_echo "${password}" 32 \
             || github_internal_echo "NULL" 31
 
         github_internal_echo "project:   \c" 34
-        github_internal_echo "${SCRIPT_VAR_PROJ}" 32 \
+        github_internal_echo "${GITHUB_PROJECT}" 32 \
             || github_internal_echo "NULL" 31
 
         return 0
     fi
 
     github_internal_set "${1}" "${2}" \
-        && github_internal_echo "Value of \"${1}\" defined with sucess." 32
+        && github_internal_echo "Value of \"${1}\" defined with sucess.\n" 32
 }
+
 # github_shell
 github_shell()
 {
     github_internal_echo "Welcome to Github Shell - ${SCRIPT_VERSION}" 32
     github_internal_echo "${SCRIPT_DESCRIPTION}\n"
 
-    while read -e -p "${SCRIPT_PROMPT}" input
-    do
+    while read -e -p "${GITHUB_PROMPT}" input; do
 
-        if [ "${input}" == "" ]
-        then
+        if [ "${input}" == "" ]; then
             continue
         fi
 
         command_name=$(echo "${input}" | awk '{print $1}')
-        if [ "$(echo "${input}" | wc -w | awk '{print $1}')" != 1 ]
-        then
+        if [ "$(echo "${input}" | wc -w | awk '{print $1}')" != 1 ]; then
             command_args=$(echo "${input}" | cut -d ' ' -f 2-)
         else
             command_args=""

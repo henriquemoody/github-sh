@@ -22,32 +22,32 @@ github_external_issue()
 
     if [ -z "${project}" ]
     then
-        if [ -z "${SCRIPT_VAR_PROJ}" ]
+        if [ -z "${GITHUB_PROJECT}" ]
         then
             read -e -p "Project name: " project
         else
-            project="${SCRIPT_VAR_PROJ}"
+            project="${GITHUB_PROJECT}"
         fi
     fi
 
     if [ -z "${user}" ]
     then
-        if [ -z "${SCRIPT_VAR_USER}" ]
+        if [ -z "${GITHUB_USERNAME}" ]
         then
             read -e -p "User or Organization: " project
         else
-            user="${SCRIPT_VAR_USER}"
+            user="${GITHUB_USERNAME}"
         fi
     fi
 
     url="https://api.github.com/repos/${user}/${project}/issues/${number}/comments"
 
-    if [ "${SCRIPT_VAR_USER}" != "" ]
+    if [ "${GITHUB_USERNAME}" != "" ]
     then
-        extra_param="${SCRIPT_VAR_USER}"
-        if [ "${SCRIPT_VAR_PASS}" != "" ]
+        extra_param="${GITHUB_USERNAME}"
+        if [ "${GITHUB_PASSWORD}" != "" ]
         then
-            extra_param="${extra_param}:${SCRIPT_VAR_PASS}"
+            extra_param="${extra_param}:${GITHUB_PASSWORD}"
         fi
         extra_param="-u '${extra_param}'"
     fi

@@ -14,15 +14,15 @@ github_internal_set()
     case "${label}" in 
 
         user)
-            SCRIPT_VAR_USER="${value}"
+            GITHUB_USERNAME="${value}"
         ;;
 
         password)
-            SCRIPT_VAR_PASS="${value}"
+            GITHUB_PASSWORD="${value}"
         ;;
 
         project)
-            SCRIPT_VAR_PROJ="${value}"
+            GITHUB_PROJECT="${value}"
         ;;
 
         *)
@@ -31,11 +31,11 @@ github_internal_set()
 
     esac
 
-    SCRIPT_VAR_PROMPT="${SCRIPT_PROMPT}"
-    if [ ! -z "${SCRIPT_VAR_PROJ}" ]; then
-        SCRIPT_VAR_PROMPT="${SCRIPT_VAR_PROJ}"
+    GITHUB_PROMPT="${SCRIPT_PROMPT}"
+    if [ ! -z "${GITHUB_PROJECT}" ]; then
+        GITHUB_PROMPT="${GITHUB_PROMPT}/${GITHUB_PROJECT}"
     fi
-    SCRIPT_VAR_PROMPT="${SCRIPT_VAR_PROMPT}${SCRIPT_PROMPT_CHAR}"
+    GITHUB_PROMPT="${GITHUB_PROMPT}${SCRIPT_PROMPT_CHAR}"
 
     return 0
 }
