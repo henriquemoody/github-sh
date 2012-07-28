@@ -8,19 +8,19 @@
 #
 # Changelog
 # =========
+#   1.0.2   Update prompt with defined user data.
 #   1.0.2   Created OSX compatibility
 #   1.0.1   Update script structure
 #   1.0.0   Base script
 #
 
+# Readonly vars
 declare -r SCRIPT_NAME=$(basename "${0}")
 declare -r SCRIPT_DIRECTORY=$(dirname "${0}")
 declare -r SCRIPT_DESCRIPTION=$(sed -n 2p "${0}" |  sed -E 's/^# ?//g')
 declare -r SCRIPT_VERSION=$(sed -n 11p "${0}" | awk '{print $2}')
-declare -r SCRIPT_PROMPT="github> "
-declare SCRIPT_VAR_USER=""
-declare SCRIPT_VAR_PASS=""
-declare SCRIPT_VAR_PROJ=""
+declare -r SCRIPT_PROMPT="github"
+declare -r SCRIPT_PROMPT_CHAR="> "
 declare -r SCRIPT_HELP="Usage: ${SCRIPT_NAME} [OPTIONS]
 ${SCRIPT_DESCRIPTION}
 
@@ -30,6 +30,12 @@ ${SCRIPT_DESCRIPTION}
     -u, --update    Self update ${SCRIPT_NAME}.
 
 Report bugs to: henriquemoody@gmail.com."
+
+# Global vars
+declare SCRIPT_VAR_PROMPT="${SCRIPT_PROMPT}${SCRIPT_PROMPT_CHAR}"
+declare SCRIPT_VAR_USER=""
+declare SCRIPT_VAR_PASS=""
+declare SCRIPT_VAR_PROJ=""
 
 source "${SCRIPT_DIRECTORY}/src/internal/echo.sh"
 source "${SCRIPT_DIRECTORY}/src/internal/set.sh"

@@ -4,17 +4,14 @@ github_shell()
     github_internal_echo "Welcome to Github Shell - ${SCRIPT_VERSION}" 32
     github_internal_echo "${SCRIPT_DESCRIPTION}\n"
 
-    while read -e -p "${SCRIPT_PROMPT}" input
-    do
+    while read -e -p "${SCRIPT_VAR_PROMPT}" input; do
 
-        if [ "${input}" == "" ]
-        then
+        if [ "${input}" == "" ]; then
             continue
         fi
 
         command_name=$(echo "${input}" | awk '{print $1}')
-        if [ "$(echo "${input}" | wc -w | awk '{print $1}')" != 1 ]
-        then
+        if [ "$(echo "${input}" | wc -w | awk '{print $1}')" != 1 ]; then
             command_args=$(echo "${input}" | cut -d ' ' -f 2-)
         else
             command_args=""
