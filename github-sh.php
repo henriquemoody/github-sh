@@ -35,8 +35,8 @@ do{
         if(is_string($cmd)) {
             echo $cmd."\n";
         }
-    } else {
-        echo "invalid gitHub Command.\n";
+    } elseif (!empty($buf)) {
+        echo 'Invalid GitHub command.' . PHP_EOL . "\t" . $buf . PHP_EOL;
     }
 
 } while($buf != "tchau");

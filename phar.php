@@ -24,6 +24,8 @@ foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator(__DIR__)) 
     $relativepath = str_replace(__DIR__ . '/', '', $realpath);
     if (preg_match($pattern, '/' . $relativepath) 
             || $realpath === realpath(__DIR__ . '/..')
+            || $filename->getBasename() === 'github-sh'
+            || $filename->getBasename() === 'phar.php'
             || $realpath === __DIR__) {
         continue;
     }
@@ -37,3 +39,4 @@ foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator(__DIR__)) 
 $phar->setStub($phar->createDefaultStub('github-sh.php'));
 
 rename($phar_file, __DIR__ . '/github-sh');
+chmod(__DIR__ . '/github-sh', 0775);
