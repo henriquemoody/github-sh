@@ -40,7 +40,9 @@ declare GITHUB_PROJECT=""
 source "${SCRIPT_DIRECTORY}/src/internal/echo.sh"
 source "${SCRIPT_DIRECTORY}/src/internal/set.sh"
 source "${SCRIPT_DIRECTORY}/src/external/issue.sh"
+source "${SCRIPT_DIRECTORY}/src/external/issue/list.sh"
 source "${SCRIPT_DIRECTORY}/src/external/set.sh"
+source "${SCRIPT_DIRECTORY}/src/external/exit.sh"
 source "${SCRIPT_DIRECTORY}/src/shell.sh"
 
 while [ "${1}" != "" ]
