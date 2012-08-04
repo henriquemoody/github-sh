@@ -21,7 +21,7 @@ github_shell()
 
         case "${command_name}" in
 
-            set | issue | exit)
+            set | issue | exit | help | reload)
                 github_external_${command_name} ${command_args}
             ;;
 

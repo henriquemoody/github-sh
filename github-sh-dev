@@ -8,7 +8,7 @@
 #
 # Changelog
 # =========
-#   1.0.2   Update prompt with defined user data.
+#   1.0.3   Update prompt with defined user data.
 #   1.0.2   Created OSX compatibility
 #   1.0.1   Update script structure
 #   1.0.0   Base script
@@ -16,6 +16,7 @@
 
 # Readonly vars
 declare -r SCRIPT_NAME=$(basename "${0}")
+declare -r SCRIPT_SOURCE="${0}"
 declare -r SCRIPT_DIRECTORY=$(dirname "${0}")
 declare -r SCRIPT_DESCRIPTION=$(sed -n 2p "${0}" |  sed -E 's/^# ?//g')
 declare -r SCRIPT_VERSION=$(sed -n 11p "${0}" | awk '{print $2}')
@@ -37,12 +38,17 @@ declare GITHUB_USERNAME=""
 declare GITHUB_PASSWORD=""
 declare GITHUB_PROJECT=""
 
+
 source "${SCRIPT_DIRECTORY}/src/internal/echo.sh"
 source "${SCRIPT_DIRECTORY}/src/internal/set.sh"
+source "${SCRIPT_DIRECTORY}/src/external/help.sh"
+source "${SCRIPT_DIRECTORY}/src/external/help/set.sh"
+source "${SCRIPT_DIRECTORY}/src/external/help/issue.sh"
 source "${SCRIPT_DIRECTORY}/src/external/issue.sh"
 source "${SCRIPT_DIRECTORY}/src/external/issue/list.sh"
 source "${SCRIPT_DIRECTORY}/src/external/set.sh"
 source "${SCRIPT_DIRECTORY}/src/external/exit.sh"
+source "${SCRIPT_DIRECTORY}/src/external/reload.sh"
 source "${SCRIPT_DIRECTORY}/src/shell.sh"
 
 while [ "${1}" != "" ]
