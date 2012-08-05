@@ -13,7 +13,7 @@ github_internal_set()
 
     case "${label}" in 
 
-        user)
+        username)
             GITHUB_USERNAME="${value}"
         ;;
 
@@ -31,11 +31,11 @@ github_internal_set()
 
     esac
 
-    GITHUB_PROMPT="${SCRIPT_PROMPT}"
+    GITHUB_PROMPT="${GITHUBSH_PROMPT}"
     if [ ! -z "${GITHUB_PROJECT}" ]; then
         GITHUB_PROMPT="${GITHUB_PROMPT}/${GITHUB_PROJECT}"
     fi
-    GITHUB_PROMPT="${GITHUB_PROMPT}${SCRIPT_PROMPT_CHAR}"
+    GITHUB_PROMPT="${GITHUB_PROMPT}${GITHUBSH_PROMPT_CHAR}"
 
     return 0
 }

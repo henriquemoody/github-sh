@@ -16,26 +16,27 @@
 #
 
 # Readonly vars
-declare -r SCRIPT_NAME=$(basename "${0}")
-declare -r SCRIPT_SOURCE="${0}"
-declare -r SCRIPT_HISTORY="${HOME}/.github-sh_history"
-declare -r SCRIPT_DIRECTORY=$(dirname "${0}")
-declare -r SCRIPT_DESCRIPTION=$(sed -n 2p "${0}" |  sed -E 's/^# ?//g')
-declare -r SCRIPT_VERSION=$(sed -n 11p "${0}" | awk '{print $2}')
-declare -r SCRIPT_PROMPT="github"
-declare -r SCRIPT_PROMPT_CHAR="> "
-declare -r SCRIPT_HELP="Usage: ${SCRIPT_NAME} [OPTIONS]
-${SCRIPT_DESCRIPTION}
+declare -r GITHUBSH_NAME=$(basename "${0}")
+declare -r GITHUBSH_SOURCE="${0}"
+declare -r GITHUBSH_DIRECTORY="${HOME}/.github-sh"
+declare -r GITHUBSH_HISTORY="${HOME}/.github-sh_history"
+declare -r GITHUBSH_BASE_DIRECTORY=$(dirname "${0}")
+declare -r GITHUBSH_DESCRIPTION=$(sed -n 2p "${0}" |  sed -E 's/^# ?//g')
+declare -r GITHUBSH_VERSION=$(sed -n 11p "${0}" | awk '{print $2}')
+declare -r GITHUBSH_PROMPT="github"
+declare -r GITHUBSH_PROMPT_CHAR="> "
+declare -r GITHUBSH_HELP="Usage: ${GITHUBSH_NAME} [OPTIONS]
+${GITHUBSH_DESCRIPTION}
 
     -h, --help      Displays this help.
     -s, --set       Defines default values for variables (\"user\", \"password\", \"project\").
     -v, --version   Displays the version of the program.
-    -u, --update    Self update ${SCRIPT_NAME}.
+    -u, --update    Self update ${GITHUBSH_NAME}.
 
 Report bugs on https://github.com/henriquemoody/github-sh/issues."
 
 # Global vars
-declare GITHUB_PROMPT="${SCRIPT_PROMPT}${SCRIPT_PROMPT_CHAR}"
+declare GITHUB_PROMPT="${GITHUBSH_PROMPT}${GITHUBSH_PROMPT_CHAR}"
 declare GITHUB_USERNAME=""
 declare GITHUB_PASSWORD=""
 declare GITHUB_PROJECT=""
@@ -76,7 +77,7 @@ github_internal_set()
 
     case "${label}" in 
 
-        user)
+        username)
             GITHUB_USERNAME="${value}"
         ;;
 
@@ -94,11 +95,11 @@ github_internal_set()
 
     esac
 
-    GITHUB_PROMPT="${SCRIPT_PROMPT}"
+    GITHUB_PROMPT="${GITHUBSH_PROMPT}"
     if [ ! -z "${GITHUB_PROJECT}" ]; then
         GITHUB_PROMPT="${GITHUB_PROMPT}/${GITHUB_PROJECT}"
     fi
-    GITHUB_PROMPT="${GITHUB_PROMPT}${SCRIPT_PROMPT_CHAR}"
+    GITHUB_PROMPT="${GITHUB_PROMPT}${GITHUBSH_PROMPT_CHAR}"
 
     return 0
 }
@@ -251,16 +252,16 @@ github_external_set()
 {
     if [ -z "${1}" ]
     then
-        github_internal_echo "user:      \c" 34
+        github_internal_echo "username: \c" 34
         github_internal_echo "${GITHUB_USERNAME}" 32 \
             || github_internal_echo "NULL" 31
 
         local password=$(echo ${GITHUB_PASSWORD} | tr '[:alnum:]' '*')
-        github_internal_echo "password:  \c" 34
+        github_internal_echo "password: \c" 34
         github_internal_echo "${password}" 32 \
             || github_internal_echo "NULL" 31
 
-        github_internal_echo "project:   \c" 34
+        github_internal_echo "project:  \c" 34
         github_internal_echo "${GITHUB_PROJECT}" 32 \
             || github_internal_echo "NULL" 31
 
@@ -281,21 +282,22 @@ github_external_exit()
 # Just for developers
 github_external_reload()
 {
-    clear && ${SCRIPT_SOURCE}
+    clear && ${GITHUBSH_SOURCE}
 }
+
 # github_shell
 github_shell()
 {
-    if [ ! -f "${SCRIPT_HISTORY}" ]; then
-        history -r "${SCRIPT_HISTORY}"
+    if [ ! -f "${GITHUBSH_HISTORY}" ]; then
+        history -r "${GITHUBSH_HISTORY}"
     else
-        touch "${SCRIPT_HISTORY}"
+        touch "${GITHUBSH_HISTORY}"
     fi
 
-    github_internal_echo "Welcome to Github Shell - ${SCRIPT_VERSION}" 32
-    github_internal_echo "${SCRIPT_DESCRIPTION}\n"
+    github_internal_echo "Welcome to Github Shell - ${GITHUBSH_VERSION}" 32
+    github_internal_echo "${GITHUBSH_DESCRIPTION}\n"
 
-    history -r "${SCRIPT_HISTORY}"
+    history -r "${GITHUBSH_HISTORY}"
 
     while read -e -p "${GITHUB_PROMPT}" input; do
 
@@ -325,7 +327,7 @@ github_shell()
 
         esac
 
-        history -w "${SCRIPT_HISTORY}"
+        history -w "${GITHUBSH_HISTORY}"
 
     done
 
@@ -339,7 +341,7 @@ do
 
         -h | --help)
 
-            github_internal_echo "${SCRIPT_HELP}"
+            github_internal_echo "${GITHUBSH_HELP}"
             exit 0
 
         ;;
@@ -357,15 +359,15 @@ do
 
         -V)
 
-            github_internal_echo "${SCRIPT_VERSION}"
+            github_internal_echo "${GITHUBSH_VERSION}"
             exit 0
 
         ;;
 
         -v | --version)
 
-            github_internal_echo "${SCRIPT_NAME} version ${SCRIPT_VERSION}"
-            github_internal_echo "${SCRIPT_DESCRIPTION}"
+            github_internal_echo "${GITHUBSH_NAME} version ${GITHUBSH_VERSION}"
+            github_internal_echo "${GITHUBSH_DESCRIPTION}"
             exit 0
 
         ;;
@@ -377,23 +379,23 @@ do
             curl -L git.io/github-sh -o ${TEMPORARY}
             chmod +x ${TEMPORARY}
             HEAD_VERSION=$(${TEMPORARY} -V)
-            if [ "${HEAD_VERSION}" ==  "${SCRIPT_VERSION}" ]
+            if [ "${HEAD_VERSION}" ==  "${GITHUBSH_VERSION}" ]
             then
                 github_internal_echo "Nothing to update." 32
-                github_internal_echo "The last version of ${SCRIPT_NAME} is ${HEAD_VERSION}."
+                github_internal_echo "The last version of ${GITHUBSH_NAME} is ${HEAD_VERSION}."
                 rm -f ${TEMPORARY}
                 exit 0
             fi
 
             if [ ! -w "${0}" ]
             then
-                github_internal_echo "You don't have permission to update ${SCRIPT_NAME}." 31 1>&2
+                github_internal_echo "You don't have permission to update ${GITHUBSH_NAME}." 31 1>&2
                 rm -f ${TEMPORARY}
                 exit 3
             fi
 
             mv ${TEMPORARY} "${0}"
-            github_internal_echo "Successfully updated of ${SCRIPT_VERSION} to ${HEAD_VERSION}" 32
+            github_internal_echo "Successfully updated of ${GITHUBSH_VERSION} to ${HEAD_VERSION}" 32
             exit 0
 
         ;;
@@ -402,7 +404,7 @@ do
 
             if [ "${1}" != "" ]
             then
-                github_internal_echo "${SCRIPT_HELP_MESSAGE}" 1>&2
+                github_internal_echo "${GITHUBSH_HELP_MESSAGE}" 1>&2
                 exit 2
             fi
 

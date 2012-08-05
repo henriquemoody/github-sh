@@ -16,41 +16,47 @@
 #
 
 # Readonly vars
-declare -r SCRIPT_NAME=$(basename "${0}")
-declare -r SCRIPT_SOURCE="${0}"
-declare -r SCRIPT_HISTORY="${HOME}/.github-sh_history"
-declare -r SCRIPT_DIRECTORY=$(dirname "${0}")
-declare -r SCRIPT_DESCRIPTION=$(sed -n 2p "${0}" |  sed -E 's/^# ?//g')
-declare -r SCRIPT_VERSION=$(sed -n 11p "${0}" | awk '{print $2}')
-declare -r SCRIPT_PROMPT="github"
-declare -r SCRIPT_PROMPT_CHAR="> "
-declare -r SCRIPT_HELP="Usage: ${SCRIPT_NAME} [OPTIONS]
-${SCRIPT_DESCRIPTION}
+declare -r GITHUBSH_NAME=$(basename "${0}")
+declare -r GITHUBSH_SOURCE="${0}"
+declare -r GITHUBSH_DIRECTORY="${HOME}/.github-sh"
+declare -r GITHUBSH_HISTORY="${GITHUBSH_DIRECTORY}/history"
+declare -r GITHUBSH_BASE_DIRECTORY=$(dirname "${0}")
+declare -r GITHUBSH_DESCRIPTION=$(sed -n 2p "${0}" |  sed -E 's/^# ?//g')
+declare -r GITHUBSH_VERSION=$(sed -n 11p "${0}" | awk '{print $2}')
+declare -r GITHUBSH_PROMPT="github"
+declare -r GITHUBSH_PROMPT_CHAR="> "
+declare -r GITHUBSH_HELP="Usage: ${GITHUBSH_NAME} [OPTIONS]
+${GITHUBSH_DESCRIPTION}
 
     -h, --help      Displays this help.
     -s, --set       Defines default values for variables (\"user\", \"password\", \"project\").
     -v, --version   Displays the version of the program.
-    -u, --update    Self update ${SCRIPT_NAME}.
+    -u, --update    Self update ${GITHUBSH_NAME}.
 
 Report bugs on https://github.com/henriquemoody/github-sh/issues."
 
 # Global vars
-declare GITHUB_PROMPT="${SCRIPT_PROMPT}${SCRIPT_PROMPT_CHAR}"
+declare GITHUB_PROMPT="${GITHUBSH_PROMPT}${GITHUBSH_PROMPT_CHAR}"
 declare GITHUB_USERNAME=""
 declare GITHUB_PASSWORD=""
 declare GITHUB_PROJECT=""
 
-source "${SCRIPT_DIRECTORY}/src/internal/echo.sh"
-source "${SCRIPT_DIRECTORY}/src/internal/set.sh"
-source "${SCRIPT_DIRECTORY}/src/external/help.sh"
-source "${SCRIPT_DIRECTORY}/src/external/help/set.sh"
-source "${SCRIPT_DIRECTORY}/src/external/help/issue.sh"
-source "${SCRIPT_DIRECTORY}/src/external/issue.sh"
-source "${SCRIPT_DIRECTORY}/src/external/issue/list.sh"
-source "${SCRIPT_DIRECTORY}/src/external/set.sh"
-source "${SCRIPT_DIRECTORY}/src/external/exit.sh"
-source "${SCRIPT_DIRECTORY}/src/external/reload.sh"
-source "${SCRIPT_DIRECTORY}/src/shell.sh"
+# Check github directory
+if [ ! -d "${GITHUBSH_DIRECTORY}" ]; then
+    mkdir -p "${GITHUBSH_DIRECTORY}"
+fi
+
+source "${GITHUBSH_BASE_DIRECTORY}/src/internal/echo.sh"
+source "${GITHUBSH_BASE_DIRECTORY}/src/internal/set.sh"
+source "${GITHUBSH_BASE_DIRECTORY}/src/external/help.sh"
+source "${GITHUBSH_BASE_DIRECTORY}/src/external/help/set.sh"
+source "${GITHUBSH_BASE_DIRECTORY}/src/external/help/issue.sh"
+source "${GITHUBSH_BASE_DIRECTORY}/src/external/issue.sh"
+source "${GITHUBSH_BASE_DIRECTORY}/src/external/issue/list.sh"
+source "${GITHUBSH_BASE_DIRECTORY}/src/external/set.sh"
+source "${GITHUBSH_BASE_DIRECTORY}/src/external/exit.sh"
+source "${GITHUBSH_BASE_DIRECTORY}/src/external/reload.sh"
+source "${GITHUBSH_BASE_DIRECTORY}/src/shell.sh"
 
 while [ "${1}" != "" ]
 do
@@ -59,7 +65,7 @@ do
 
         -h | --help)
 
-            github_internal_echo "${SCRIPT_HELP}"
+            github_internal_echo "${GITHUBSH_HELP}"
             exit 0
 
         ;;
@@ -77,15 +83,15 @@ do
 
         -V)
 
-            github_internal_echo "${SCRIPT_VERSION}"
+            github_internal_echo "${GITHUBSH_VERSION}"
             exit 0
 
         ;;
 
         -v | --version)
 
-            github_internal_echo "${SCRIPT_NAME} version ${SCRIPT_VERSION}"
-            github_internal_echo "${SCRIPT_DESCRIPTION}"
+            github_internal_echo "${GITHUBSH_NAME} version ${GITHUBSH_VERSION}"
+            github_internal_echo "${GITHUBSH_DESCRIPTION}"
             exit 0
 
         ;;
@@ -97,23 +103,23 @@ do
             curl -L git.io/github-sh -o ${TEMPORARY}
             chmod +x ${TEMPORARY}
             HEAD_VERSION=$(${TEMPORARY} -V)
-            if [ "${HEAD_VERSION}" ==  "${SCRIPT_VERSION}" ]
+            if [ "${HEAD_VERSION}" ==  "${GITHUBSH_VERSION}" ]
             then
                 github_internal_echo "Nothing to update." 32
-                github_internal_echo "The last version of ${SCRIPT_NAME} is ${HEAD_VERSION}."
+                github_internal_echo "The last version of ${GITHUBSH_NAME} is ${HEAD_VERSION}."
                 rm -f ${TEMPORARY}
                 exit 0
             fi
 
             if [ ! -w "${0}" ]
             then
-                github_internal_echo "You don't have permission to update ${SCRIPT_NAME}." 31 1>&2
+                github_internal_echo "You don't have permission to update ${GITHUBSH_NAME}." 31 1>&2
                 rm -f ${TEMPORARY}
                 exit 3
             fi
 
             mv ${TEMPORARY} "${0}"
-            github_internal_echo "Successfully updated of ${SCRIPT_VERSION} to ${HEAD_VERSION}" 32
+            github_internal_echo "Successfully updated of ${GITHUBSH_VERSION} to ${HEAD_VERSION}" 32
             exit 0
 
         ;;
@@ -122,7 +128,7 @@ do
 
             if [ "${1}" != "" ]
             then
-                github_internal_echo "${SCRIPT_HELP_MESSAGE}" 1>&2
+                github_internal_echo "${GITHUBSH_HELP_MESSAGE}" 1>&2
                 exit 2
             fi
 

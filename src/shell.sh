@@ -1,16 +1,16 @@
 # github_shell
 github_shell()
 {
-    if [ ! -f "${SCRIPT_HISTORY}" ]; then
-        history -r "${SCRIPT_HISTORY}"
+    if [ -f "${GITHUBSH_HISTORY}" ]; then
+        history -r "${GITHUBSH_HISTORY}"
     else
-        touch "${SCRIPT_HISTORY}"
+        touch "${GITHUBSH_HISTORY}"
     fi
 
-    github_internal_echo "Welcome to Github Shell - ${SCRIPT_VERSION}" 32
-    github_internal_echo "${SCRIPT_DESCRIPTION}\n"
+    github_internal_echo "Welcome to Github Shell - ${GITHUBSH_VERSION}" 32
+    github_internal_echo "${GITHUBSH_DESCRIPTION}\n"
 
-    history -r "${SCRIPT_HISTORY}"
+    history -r "${GITHUBSH_HISTORY}"
 
     while read -e -p "${GITHUB_PROMPT}" input; do
 
@@ -40,7 +40,7 @@ github_shell()
 
         esac
 
-        history -w "${SCRIPT_HISTORY}"
+        history -w "${GITHUBSH_HISTORY}"
 
     done
 
