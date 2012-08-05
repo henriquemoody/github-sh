@@ -10,6 +10,8 @@ github_shell()
     github_internal_echo "Welcome to Github Shell - ${SCRIPT_VERSION}" 32
     github_internal_echo "${SCRIPT_DESCRIPTION}\n"
 
+    history -r "${SCRIPT_HISTORY}"
+
     while read -e -p "${GITHUB_PROMPT}" input; do
 
         if [ "${input}" == "" ]; then
