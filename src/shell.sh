@@ -1,6 +1,12 @@
 # github_shell
 github_shell()
 {
+    if [ ! -f "${SCRIPT_HISTORY}" ]; then
+        history -r "${SCRIPT_HISTORY}"
+    else
+        touch "${SCRIPT_HISTORY}"
+    fi
+
     github_internal_echo "Welcome to Github Shell - ${SCRIPT_VERSION}" 32
     github_internal_echo "${SCRIPT_DESCRIPTION}\n"
 
@@ -32,5 +38,8 @@ github_shell()
 
         esac
 
+        history -w "${SCRIPT_HISTORY}"
+
     done
+
 }

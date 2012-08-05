@@ -8,7 +8,7 @@
 #
 # Changelog
 # =========
-#   1.0.2   Update prompt with defined user data.
+#   1.0.3   Update prompt with defined user data.
 #   1.0.2   Created OSX compatibility
 #   1.0.1   Update script structure
 #   1.0.0   Base script
@@ -16,6 +16,8 @@
 
 # Readonly vars
 declare -r SCRIPT_NAME=$(basename "${0}")
+declare -r SCRIPT_SOURCE="${0}"
+declare -r SCRIPT_HISTORY="${HOME}/.github-sh_history"
 declare -r SCRIPT_DIRECTORY=$(dirname "${0}")
 declare -r SCRIPT_DESCRIPTION=$(sed -n 2p "${0}" |  sed -E 's/^# ?//g')
 declare -r SCRIPT_VERSION=$(sed -n 11p "${0}" | awk '{print $2}')
@@ -100,6 +102,48 @@ github_internal_set()
     return 0
 }
 
+github_external_help()
+{
+    local MESSAGE
+    local HELP_FUNCTION=github_external_help_"${1}"
+
+    if [ ! -z "${1}" ]; then
+
+        MESSAGE=$(
+            type "${HELP_FUNCTION}" &>/dev/null \
+                && ${HELP_FUNCTION} full \
+                || echo "There is no help for \"${1}\""
+        );
+
+    else
+        MESSAGE="GitHub Shell Help
+
+    set     $(github_external_help_set)
+    issue   Make operations with Github issues."
+    fi
+
+    github_internal_echo "${MESSAGE}\n"
+}
+github_external_help_set()
+{
+    github_internal_echo "Defines a value for an existent variable."
+    if [ "${1}" == "full" ]; then
+        github_internal_echo
+        github_internal_echo "Usage:\n"
+        github_internal_echo "  set VAR [ VALUE ]\n"
+        github_internal_echo "Existent variables:\n"
+        github_internal_echo "  user      : Your GitHub username."
+        github_internal_echo "  password  : Your GitHub password."
+        github_internal_echo "  project   : Current GitHub project."
+    fi
+}
+github_external_help_issue()
+{
+    github_internal_echo "Make actions for GitHub issues."
+    if [ "${1}" == "full" ]; then
+        github_internal_echo "There us a full descritpion"
+    fi
+}
 # github_external_issue ACTION NUMBER [ PROJECT [ USER ] ]
 github_external_issue()
 {
@@ -165,6 +209,44 @@ github_external_issue()
 
 }
 
+# github_external_issue_list [ PROJECT ]
+github_external_issue_list()
+{
+    local project="${1}"
+    local url="https://api.github.com/repos"
+    if [ -z "${project}" ]; then
+        if [ -z "${GITHUB_PROJECT}" ]; then
+            read -e -p "Project name: " project
+        else
+            project="${GITHUB_PROJECT}"
+        fi
+    fi
+
+    url="${url}/${project}/issues"
+
+    if [ "${GITHUB_USERNAME}" != "" ]
+    then
+        extra_param="${GITHUB_USERNAME}"
+        if [ "${GITHUB_PASSWORD}" != "" ]
+        then
+            extra_param="${extra_param}:${GITHUB_PASSWORD}"
+        fi
+        extra_param="-u '${extra_param}'"
+    fi
+
+    echo ${url}
+    JSON_CONTENT=$(curl "${extra_param}" -L "${url}" 2>/dev/null)
+
+    echo "${JSON_CONTENT}" \
+      | awk '/title/ {print NR}' \
+      | while read title_line; do
+          let number_line=(title_line+9)
+          title=$(echo "${JSON_CONTENT}" | github_internal_jsonline ${title_line})
+          number=$(echo "${JSON_CONTENT}" | github_internal_jsonline ${number_line})
+          echo "${number}. ${title}"
+        done
+}
+
 # github_external_set VAR [ VALUE ]
 github_external_set()
 {
@@ -197,9 +279,20 @@ github_external_exit()
     exit 0
 }
 
+# Just for developers
+github_external_reload()
+{
+    clear && ${SCRIPT_SOURCE}
+}
 # github_shell
 github_shell()
 {
+    if [ ! -f "${SCRIPT_HISTORY}" ]; then
+        history -r "${SCRIPT_HISTORY}"
+    else
+        touch "${SCRIPT_HISTORY}"
+    fi
+
     github_internal_echo "Welcome to Github Shell - ${SCRIPT_VERSION}" 32
     github_internal_echo "${SCRIPT_DESCRIPTION}\n"
 
@@ -220,7 +313,7 @@ github_shell()
 
         case "${command_name}" in
 
-            set | issue | exit)
+            set | issue | exit | help | reload)
                 github_external_${command_name} ${command_args}
             ;;
 
@@ -231,7 +324,10 @@ github_shell()
 
         esac
 
+        history -w "${SCRIPT_HISTORY}"
+
     done
+
 }
 
 
