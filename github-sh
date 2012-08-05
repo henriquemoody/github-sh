@@ -8,6 +8,7 @@
 #
 # Changelog
 # =========
+#   1.0.3   Update help message.
 #   1.0.3   Update prompt with defined user data.
 #   1.0.2   Created OSX compatibility
 #   1.0.1   Update script structure
@@ -38,9 +39,6 @@ declare GITHUB_PROMPT="${SCRIPT_PROMPT}${SCRIPT_PROMPT_CHAR}"
 declare GITHUB_USERNAME=""
 declare GITHUB_PASSWORD=""
 declare GITHUB_PROJECT=""
-
-touch "${SCRIPT_HISTORY}"
-
 
 # github_internal_echo MESSAGE [COLOR [DECORATION]] 
 github_internal_echo()
@@ -111,13 +109,11 @@ github_external_help()
     local HELP_FUNCTION=github_external_help_"${1}"
 
     if [ ! -z "${1}" ]; then
-
         MESSAGE=$(
             type "${HELP_FUNCTION}" &>/dev/null \
                 && ${HELP_FUNCTION} full \
-                || echo "There is no help for \"${1}\""
-        );
-
+                || github_internal_echo "There is no help for \"${1}\"" 31
+        )
     else
         MESSAGE="GitHub Shell Help
 
