@@ -17,6 +17,7 @@
 # Readonly vars
 declare -r SCRIPT_NAME=$(basename "${0}")
 declare -r SCRIPT_SOURCE="${0}"
+declare -r SCRIPT_HISTORY="${HOME}/.github-sh_history"
 declare -r SCRIPT_DIRECTORY=$(dirname "${0}")
 declare -r SCRIPT_DESCRIPTION=$(sed -n 2p "${0}" |  sed -E 's/^# ?//g')
 declare -r SCRIPT_VERSION=$(sed -n 11p "${0}" | awk '{print $2}')
@@ -37,6 +38,8 @@ declare GITHUB_PROMPT="${SCRIPT_PROMPT}${SCRIPT_PROMPT_CHAR}"
 declare GITHUB_USERNAME=""
 declare GITHUB_PASSWORD=""
 declare GITHUB_PROJECT=""
+
+touch "${SCRIPT_HISTORY}"
 
 
 source "${SCRIPT_DIRECTORY}/src/internal/echo.sh"

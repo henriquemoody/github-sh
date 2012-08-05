@@ -12,7 +12,8 @@ github_external_help()
         );
 
     else
-        MESSAGE="
+        MESSAGE="GitHub Shell Help
+
     set     $(github_external_help_set)
     issue   Make operations with Github issues."
     fi
