@@ -32,7 +32,7 @@ ${SCRIPT_DESCRIPTION}
     -v, --version   Displays the version of the program.
     -u, --update    Self update ${SCRIPT_NAME}.
 
-Report bugs to: henriquemoody@gmail.com."
+Report bugs on https://github.com/henriquemoody/github-sh/issues."
 
 # Global vars
 declare GITHUB_PROMPT="${SCRIPT_PROMPT}${SCRIPT_PROMPT_CHAR}"
