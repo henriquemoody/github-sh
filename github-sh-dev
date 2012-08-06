@@ -8,11 +8,11 @@
 #
 # Changelog
 # =========
-#   1.0.3   Update help message.
-#   1.0.3   Update prompt with defined user data.
-#   1.0.2   Created OSX compatibility
-#   1.0.1   Update script structure
-#   1.0.0   Base script
+#   0.1.3   Update help message.
+#   0.1.3   Update prompt with defined user data.
+#   0.1.2   Created OSX compatibility
+#   0.1.1   Update script structure
+#   0.1.0   Base script
 #
 
 # Readonly vars

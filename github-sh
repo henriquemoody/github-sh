@@ -8,18 +8,18 @@
 #
 # Changelog
 # =========
-#   1.0.3   Update help message.
-#   1.0.3   Update prompt with defined user data.
-#   1.0.2   Created OSX compatibility
-#   1.0.1   Update script structure
-#   1.0.0   Base script
+#   0.1.3   Update help message.
+#   0.1.3   Update prompt with defined user data.
+#   0.1.2   Created OSX compatibility
+#   0.1.1   Update script structure
+#   0.1.0   Base script
 #
 
 # Readonly vars
 declare -r GITHUBSH_NAME=$(basename "${0}")
 declare -r GITHUBSH_SOURCE="${0}"
 declare -r GITHUBSH_DIRECTORY="${HOME}/.github-sh"
-declare -r GITHUBSH_HISTORY="${HOME}/.github-sh_history"
+declare -r GITHUBSH_HISTORY="${GITHUBSH_DIRECTORY}/history"
 declare -r GITHUBSH_BASE_DIRECTORY=$(dirname "${0}")
 declare -r GITHUBSH_DESCRIPTION=$(sed -n 2p "${0}" |  sed -E 's/^# ?//g')
 declare -r GITHUBSH_VERSION=$(sed -n 11p "${0}" | awk '{print $2}')
@@ -40,6 +40,11 @@ declare GITHUB_PROMPT="${GITHUBSH_PROMPT}${GITHUBSH_PROMPT_CHAR}"
 declare GITHUB_USERNAME=""
 declare GITHUB_PASSWORD=""
 declare GITHUB_PROJECT=""
+
+# Check github directory
+if [ ! -d "${GITHUBSH_DIRECTORY}" ]; then
+    mkdir -p "${GITHUBSH_DIRECTORY}"
+fi
 
 # github_internal_echo MESSAGE [COLOR [DECORATION]] 
 github_internal_echo()
@@ -106,42 +111,55 @@ github_internal_set()
 
 github_external_help()
 {
-    local MESSAGE
-    local HELP_FUNCTION=github_external_help_"${1}"
+    local sub_help=github_external_help_"${1}"
 
-    if [ ! -z "${1}" ]; then
-        MESSAGE=$(
-            type "${HELP_FUNCTION}" &>/dev/null \
-                && ${HELP_FUNCTION} full \
-                || github_internal_echo "There is no help for \"${1}\"" 31
-        )
-    else
-        MESSAGE="GitHub Shell Help
-
-    set     $(github_external_help_set)
-    issue   Make operations with Github issues."
+    if [ ! -z "${2}" ]; then
+        sub_help="${sub_help}_${2}"
     fi
 
-    github_internal_echo "${MESSAGE}\n"
+    if [ ! -z "${1}" ]; then
+        type "${sub_help}" &>/dev/null \
+          && ${sub_help} --full \
+          || github_internal_echo "There is no help for \"${1}\"" 31
+    else
+        github_internal_echo "GitHub Shell Help" 32
+        github_internal_echo "
+    set     $(github_external_help_set)
+    issue   $(github_external_help_issue)"
+    fi
+
+    github_internal_echo
+    
 }
 github_external_help_set()
 {
-    github_internal_echo "Defines a value for an existent variable."
-    if [ "${1}" == "full" ]; then
-        github_internal_echo
-        github_internal_echo "Usage:\n"
+    local title="Defines a value for an existent variable."
+    if [ "${1}" == "--full" ]; then
+        github_internal_echo "${title}\n" 32
+        github_internal_echo "Usage:\n" 34
         github_internal_echo "  set VAR [ VALUE ]\n"
-        github_internal_echo "Existent variables:\n"
+        github_internal_echo "Existent variables:\n" 34
         github_internal_echo "  user      : Your GitHub username."
         github_internal_echo "  password  : Your GitHub password."
         github_internal_echo "  project   : Current GitHub project."
+    else
+        github_internal_echo "${title}"
     fi
 }
 github_external_help_issue()
 {
-    github_internal_echo "Make actions for GitHub issues."
-    if [ "${1}" == "full" ]; then
-        github_internal_echo "There us a full descritpion"
+    local title="Performs actions on issues."
+    if [ "${1}" == "--full" ]; then
+        github_internal_echo "${title}\n" 32
+        github_internal_echo "Usage:\n" 34
+        github_internal_echo "  issue ACTION [ OPTIONS ]\n"
+        github_internal_echo "Existent actions:\n" 34
+        github_internal_echo "  list      : List issues of a project."
+        github_internal_echo "  open      : Create an issue in a project."
+        github_internal_echo "  close     : Closes an issue of a project."
+        github_internal_echo "  comments  : Displays a list of comments of an issue."
+    else
+        github_internal_echo "${title}"
     fi
 }
 # github_external_issue ACTION NUMBER [ PROJECT [ USER ] ]
@@ -288,7 +306,7 @@ github_external_reload()
 # github_shell
 github_shell()
 {
-    if [ ! -f "${GITHUBSH_HISTORY}" ]; then
+    if [ -f "${GITHUBSH_HISTORY}" ]; then
         history -r "${GITHUBSH_HISTORY}"
     else
         touch "${GITHUBSH_HISTORY}"
