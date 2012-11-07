@@ -7,8 +7,7 @@ _shell()
         touch "${GITHUBSH_HISTORY}"
     fi
 
-    _echo "Welcome to Github Shell - ${GITHUBSH_VERSION}" 32
-    _echo "${GITHUBSH_DESCRIPTION}\n"
+    _echo "[32]Welcome to Github Shell[0] - [34]${GITHUBSH_VERSION}[0]" ""
 
     history -r "${GITHUBSH_HISTORY}"
 
@@ -34,7 +33,7 @@ _shell()
             ;;
 
             *)
-                _echo "Command \"${command_name}\" not found." 31 1>&2
+                _echo -e "[31]Command \"${command_name}\" not found.[0]"
                 continue
             ;;
 

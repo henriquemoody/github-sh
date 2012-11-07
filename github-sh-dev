@@ -135,6 +135,4 @@ while [ "${1}" != "" ]; do
 
 done
 
-if [ -t 1 ]; then
-    _shell
-fi
+_shell

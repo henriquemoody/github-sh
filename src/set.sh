@@ -6,7 +6,7 @@ _set()
 
     if [ "${label}" == "password" ] && [ "${value}" == "" ]; then
         read -s -p "Type your password: " value
-        echo ""
+        _echo ""
     elif [ "${value}" == "" ]; then
         read -e -p "Value for ${label}: " value
     fi
@@ -26,7 +26,7 @@ _set()
         ;;
 
         *)
-          _echo "Invalid variable \"${label}\".\n" 31
+          _echo -e "[31]Invalid variable [34]${label}[0]"
           return 2
 
     esac

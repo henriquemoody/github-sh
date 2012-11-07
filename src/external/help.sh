@@ -7,14 +7,14 @@ _external_help()
     fi
 
     if [ ! -z "${1}" ]; then
-        type "${sub_help}" &>/dev/null \
-          && ${sub_help} --full \
-          || _echo "There is no help for \"${1}\"" 31
+        type "${sub_help}" &>/dev/null &&
+            ${sub_help} --full ||
+            _echo -e "[31]There is no help for [34]${1}[0]"
     else
-        _echo "GitHub Shell Help" 32
-        _echo "
-    set     $(_external_help_set)
-    issue   $(_external_help_issue)"
+        _echo -d '\n    ' \
+            '[32]GitHub Shell Help[0]\n' \
+                "[34]set     [0]$(_external_help_set)" \
+                "[34]issue   [0]$(_external_help_issue)"
     fi
 
     _echo

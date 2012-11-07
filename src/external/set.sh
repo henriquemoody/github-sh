@@ -2,22 +2,25 @@
 _external_set()
 {
     if [ -z "${1}" ]; then
-        _echo "username: \c" 34
-        _echo "${GITHUB_USERNAME}" 32 \
-            || _echo "NULL" 31
+        _echo -n '[34]username[0]: '
+        test "${GITHUB_USERNAME}" &&
+            _echo "[32]${GITHUB_USERNAME}[0]" ||
+            _echo '[31;3]NULL[0]'
 
-        local password=$(echo ${GITHUB_PASSWORD} | sed 's/./*/g')
-        _echo "password: \c" 34
-        _echo "${password}" 32 \
-            || _echo "NULL" 31
+        _echo -n '[34]password[0]: '
+        test "${GITHUB_PASSWORD}" &&
+            _echo "[32]$(echo ${GITHUB_PASSWORD} | sed 's/./*/g')[0]" ||
+            _echo '[31;3]NULL[0]'
 
-        _echo "project:  \c" 34
-        _echo "${GITHUB_PROJECT}" 32 \
-            || _echo "NULL" 31
+        _echo -n '[34]project[0] : '
+        test "${GITHUB_PROJECT}" &&
+            _echo "[32]${GITHUB_PROJECT}[0]" ||
+            _echo '[31;3]NULL[0]'
 
         return 0
     fi
 
-    _set "${1}" "${2}" \
-        && _echo "Value of \"${1}\" defined with sucess.\n" 32
+    _set "${1}" "${2}" &&
+        _echo "[32]Value of [34]${1}[32] defined with sucess.[0]" ||
+        _echo "[31]Failure setting value of [34]${1}[0]."
 }
