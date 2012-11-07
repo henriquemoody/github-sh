@@ -46,8 +46,8 @@ if [ ! -d "${GITHUBSH_DIRECTORY}" ]; then
     mkdir -p "${GITHUBSH_DIRECTORY}"
 fi
 
-source "${GITHUBSH_BASE_DIRECTORY}/src/internal/echo.sh"
-source "${GITHUBSH_BASE_DIRECTORY}/src/internal/set.sh"
+source "${GITHUBSH_BASE_DIRECTORY}/src/echo.sh"
+source "${GITHUBSH_BASE_DIRECTORY}/src/set.sh"
 source "${GITHUBSH_BASE_DIRECTORY}/src/external/help.sh"
 source "${GITHUBSH_BASE_DIRECTORY}/src/external/help/set.sh"
 source "${GITHUBSH_BASE_DIRECTORY}/src/external/help/issue.sh"

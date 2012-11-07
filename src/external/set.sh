@@ -6,7 +6,7 @@ _external_set()
         _echo "${GITHUB_USERNAME}" 32 \
             || _echo "NULL" 31
 
-        local password=$(echo ${GITHUB_PASSWORD} | tr '[:alnum:]' '*')
+        local password=$(echo ${GITHUB_PASSWORD} | sed 's/./*/g')
         _echo "password: \c" 34
         _echo "${password}" 32 \
             || _echo "NULL" 31
