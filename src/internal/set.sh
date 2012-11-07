@@ -1,5 +1,5 @@
-# github_internal_set VARIABLE [ VALUE ]
-github_internal_set()
+# _set VARIABLE [ VALUE ]
+_set()
 {
     local label="${1}"
     local value="${2}"
@@ -26,7 +26,7 @@ github_internal_set()
         ;;
 
         *)
-          github_internal_echo "Invalid variable \"${label}\".\n" 31
+          _echo "Invalid variable \"${label}\".\n" 31
           return 2
 
     esac

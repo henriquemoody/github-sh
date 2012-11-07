@@ -1,6 +1,6 @@
-# github_external_exit
-github_external_exit()
+# _external_exit
+_external_exit()
 {
-    github_internal_echo "Bye!"
+    _echo "Bye!"
     exit 0
 }

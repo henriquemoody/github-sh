@@ -1,24 +1,23 @@
-# github_external_set VAR [ VALUE ]
-github_external_set()
+# _external_set VAR [ VALUE ]
+_external_set()
 {
-    if [ -z "${1}" ]
-    then
-        github_internal_echo "username: \c" 34
-        github_internal_echo "${GITHUB_USERNAME}" 32 \
-            || github_internal_echo "NULL" 31
+    if [ -z "${1}" ]; then
+        _echo "username: \c" 34
+        _echo "${GITHUB_USERNAME}" 32 \
+            || _echo "NULL" 31
 
         local password=$(echo ${GITHUB_PASSWORD} | tr '[:alnum:]' '*')
-        github_internal_echo "password: \c" 34
-        github_internal_echo "${password}" 32 \
-            || github_internal_echo "NULL" 31
+        _echo "password: \c" 34
+        _echo "${password}" 32 \
+            || _echo "NULL" 31
 
-        github_internal_echo "project:  \c" 34
-        github_internal_echo "${GITHUB_PROJECT}" 32 \
-            || github_internal_echo "NULL" 31
+        _echo "project:  \c" 34
+        _echo "${GITHUB_PROJECT}" 32 \
+            || _echo "NULL" 31
 
         return 0
     fi
 
-    github_internal_set "${1}" "${2}" \
-        && github_internal_echo "Value of \"${1}\" defined with sucess.\n" 32
+    _set "${1}" "${2}" \
+        && _echo "Value of \"${1}\" defined with sucess.\n" 32
 }

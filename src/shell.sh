@@ -1,5 +1,5 @@
-# github_shell
-github_shell()
+# _shell
+_shell()
 {
     if [ -f "${GITHUBSH_HISTORY}" ]; then
         history -r "${GITHUBSH_HISTORY}"
@@ -7,8 +7,8 @@ github_shell()
         touch "${GITHUBSH_HISTORY}"
     fi
 
-    github_internal_echo "Welcome to Github Shell - ${GITHUBSH_VERSION}" 32
-    github_internal_echo "${GITHUBSH_DESCRIPTION}\n"
+    _echo "Welcome to Github Shell - ${GITHUBSH_VERSION}" 32
+    _echo "${GITHUBSH_DESCRIPTION}\n"
 
     history -r "${GITHUBSH_HISTORY}"
 
@@ -30,11 +30,11 @@ github_shell()
         case "${command_name}" in
 
             set | issue | exit | help | reload)
-                github_external_${command_name} ${command_args}
+                _external_${command_name} ${command_args}
             ;;
 
             *)
-                github_internal_echo "Command \"${command_name}\" not found." 31 1>&2
+                _echo "Command \"${command_name}\" not found." 31 1>&2
                 continue
             ;;
 

@@ -46,8 +46,8 @@ if [ ! -d "${GITHUBSH_DIRECTORY}" ]; then
     mkdir -p "${GITHUBSH_DIRECTORY}"
 fi
 
-# github_internal_echo MESSAGE [COLOR [DECORATION]] 
-github_internal_echo()
+# _echo MESSAGE [COLOR [DECORATION]] 
+_echo()
 {
     local message="${1}"
     local color="${2}"
@@ -67,8 +67,8 @@ github_internal_echo()
 
 }
 
-# github_internal_set VARIABLE [ VALUE ]
-github_internal_set()
+# _set VARIABLE [ VALUE ]
+_set()
 {
     local label="${1}"
     local value="${2}"
@@ -95,7 +95,7 @@ github_internal_set()
         ;;
 
         *)
-          github_internal_echo "Invalid variable \"${label}\".\n" 31
+          _echo "Invalid variable \"${label}\".\n" 31
           return 2
 
     esac
@@ -109,9 +109,9 @@ github_internal_set()
     return 0
 }
 
-github_external_help()
+_external_help()
 {
-    local sub_help=github_external_help_"${1}"
+    local sub_help=_external_help_"${1}"
 
     if [ ! -z "${2}" ]; then
         sub_help="${sub_help}_${2}"
@@ -120,60 +120,60 @@ github_external_help()
     if [ ! -z "${1}" ]; then
         type "${sub_help}" &>/dev/null \
           && ${sub_help} --full \
-          || github_internal_echo "There is no help for \"${1}\"" 31
+          || _echo "There is no help for \"${1}\"" 31
     else
-        github_internal_echo "GitHub Shell Help" 32
-        github_internal_echo "
-    set     $(github_external_help_set)
-    issue   $(github_external_help_issue)"
+        _echo "GitHub Shell Help" 32
+        _echo "
+    set     $(_external_help_set)
+    issue   $(_external_help_issue)"
     fi
 
-    github_internal_echo
+    _echo
     
 }
-github_external_help_set()
+_external_help_set()
 {
     local title="Defines a value for an existent variable."
     if [ "${1}" == "--full" ]; then
-        github_internal_echo "${title}\n" 32
-        github_internal_echo "Usage:\n" 34
-        github_internal_echo "  set VAR [ VALUE ]\n"
-        github_internal_echo "Existent variables:\n" 34
-        github_internal_echo "  user      : Your GitHub username."
-        github_internal_echo "  password  : Your GitHub password."
-        github_internal_echo "  project   : Current GitHub project."
+        _echo "${title}\n" 32
+        _echo "Usage:\n" 34
+        _echo "  set VAR [ VALUE ]\n"
+        _echo "Existent variables:\n" 34
+        _echo "  user      : Your GitHub username."
+        _echo "  password  : Your GitHub password."
+        _echo "  project   : Current GitHub project."
     else
-        github_internal_echo "${title}"
+        _echo "${title}"
     fi
 }
-github_external_help_issue()
+_external_help_issue()
 {
     local title="Performs actions on issues."
     if [ "${1}" == "--full" ]; then
-        github_internal_echo "${title}\n" 32
-        github_internal_echo "Usage:\n" 34
-        github_internal_echo "  issue ACTION [ OPTIONS ]\n"
-        github_internal_echo "Existent actions:\n" 34
-        github_internal_echo "  list      : List issues of a project."
-        github_internal_echo "  open      : Create an issue in a project."
-        github_internal_echo "  close     : Closes an issue of a project."
-        github_internal_echo "  comments  : Displays a list of comments of an issue."
+        _echo "${title}\n" 32
+        _echo "Usage:\n" 34
+        _echo "  issue ACTION [ OPTIONS ]\n"
+        _echo "Existent actions:\n" 34
+        _echo "  list      : List issues of a project."
+        _echo "  open      : Create an issue in a project."
+        _echo "  close     : Closes an issue of a project."
+        _echo "  comments  : Displays a list of comments of an issue."
     else
-        github_internal_echo "${title}"
+        _echo "${title}"
     fi
 }
-# github_external_issue ACTION NUMBER [ PROJECT [ USER ] ]
-github_external_issue()
+# _external_issue ACTION NUMBER [ PROJECT [ USER ] ]
+_external_issue()
 {
     if [ -z "${1}" ]
     then
-        github_internal_echo "You should define a issue action. (See \"help\" for more information)" 31 1>&2
+        _echo "You should define a issue action. (See \"help\" for more information)" 31 1>&2
         return 2
     fi
 
     if [ -z "${2}" ]
     then
-        github_internal_echo "You should define a issue number. (See \"help\" for more information)" 31 1>&2
+        _echo "You should define a issue number. (See \"help\" for more information)" 31 1>&2
         return 3
     fi
 
@@ -227,8 +227,8 @@ github_external_issue()
 
 }
 
-# github_external_issue_list [ PROJECT ]
-github_external_issue_list()
+# _external_issue_list [ PROJECT ]
+_external_issue_list()
 {
     local project="${1}"
     local url="https://api.github.com/repos"
@@ -259,52 +259,52 @@ github_external_issue_list()
       | awk '/title/ {print NR}' \
       | while read title_line; do
           let number_line=(title_line+9)
-          title=$(echo "${JSON_CONTENT}" | github_internal_jsonline ${title_line})
-          number=$(echo "${JSON_CONTENT}" | github_internal_jsonline ${number_line})
+          title=$(echo "${JSON_CONTENT}" | _jsonline ${title_line})
+          number=$(echo "${JSON_CONTENT}" | _jsonline ${number_line})
           echo "${number}. ${title}"
         done
 }
 
-# github_external_set VAR [ VALUE ]
-github_external_set()
+# _external_set VAR [ VALUE ]
+_external_set()
 {
     if [ -z "${1}" ]
     then
-        github_internal_echo "username: \c" 34
-        github_internal_echo "${GITHUB_USERNAME}" 32 \
-            || github_internal_echo "NULL" 31
+        _echo "username: \c" 34
+        _echo "${GITHUB_USERNAME}" 32 \
+            || _echo "NULL" 31
 
         local password=$(echo ${GITHUB_PASSWORD} | tr '[:alnum:]' '*')
-        github_internal_echo "password: \c" 34
-        github_internal_echo "${password}" 32 \
-            || github_internal_echo "NULL" 31
+        _echo "password: \c" 34
+        _echo "${password}" 32 \
+            || _echo "NULL" 31
 
-        github_internal_echo "project:  \c" 34
-        github_internal_echo "${GITHUB_PROJECT}" 32 \
-            || github_internal_echo "NULL" 31
+        _echo "project:  \c" 34
+        _echo "${GITHUB_PROJECT}" 32 \
+            || _echo "NULL" 31
 
         return 0
     fi
 
-    github_internal_set "${1}" "${2}" \
-        && github_internal_echo "Value of \"${1}\" defined with sucess.\n" 32
+    _set "${1}" "${2}" \
+        && _echo "Value of \"${1}\" defined with sucess.\n" 32
 }
 
-# github_external_exit
-github_external_exit()
+# _external_exit
+_external_exit()
 {
-    github_internal_echo "Bye!"
+    _echo "Bye!"
     exit 0
 }
 
 # Just for developers
-github_external_reload()
+_external_reload()
 {
     clear && ${GITHUBSH_SOURCE}
 }
 
-# github_shell
-github_shell()
+# _shell
+_shell()
 {
     if [ -f "${GITHUBSH_HISTORY}" ]; then
         history -r "${GITHUBSH_HISTORY}"
@@ -312,8 +312,8 @@ github_shell()
         touch "${GITHUBSH_HISTORY}"
     fi
 
-    github_internal_echo "Welcome to Github Shell - ${GITHUBSH_VERSION}" 32
-    github_internal_echo "${GITHUBSH_DESCRIPTION}\n"
+    _echo "Welcome to Github Shell - ${GITHUBSH_VERSION}" 32
+    _echo "${GITHUBSH_DESCRIPTION}\n"
 
     history -r "${GITHUBSH_HISTORY}"
 
@@ -335,11 +335,11 @@ github_shell()
         case "${command_name}" in
 
             set | issue | exit | help | reload)
-                github_external_${command_name} ${command_args}
+                _external_${command_name} ${command_args}
             ;;
 
             *)
-                github_internal_echo "Command \"${command_name}\" not found." 31 1>&2
+                _echo "Command \"${command_name}\" not found." 31 1>&2
                 continue
             ;;
 
@@ -359,7 +359,7 @@ do
 
         -h | --help)
 
-            github_internal_echo "${GITHUBSH_HELP}"
+            _echo "${GITHUBSH_HELP}"
             exit 0
 
         ;;
@@ -370,22 +370,22 @@ do
             do
                 key="$(echo ${line} | cut -d '=' -f 1)"
                 value="$(echo ${line} | cut -d '=' -f 2-)"
-                github_external_set "${key}" "${value}"
+                _external_set "${key}" "${value}"
             done
 
         ;;
 
         -V)
 
-            github_internal_echo "${GITHUBSH_VERSION}"
+            _echo "${GITHUBSH_VERSION}"
             exit 0
 
         ;;
 
         -v | --version)
 
-            github_internal_echo "${GITHUBSH_NAME} version ${GITHUBSH_VERSION}"
-            github_internal_echo "${GITHUBSH_DESCRIPTION}"
+            _echo "${GITHUBSH_NAME} version ${GITHUBSH_VERSION}"
+            _echo "${GITHUBSH_DESCRIPTION}"
             exit 0
 
         ;;
@@ -399,21 +399,21 @@ do
             HEAD_VERSION=$(${TEMPORARY} -V)
             if [ "${HEAD_VERSION}" ==  "${GITHUBSH_VERSION}" ]
             then
-                github_internal_echo "Nothing to update." 32
-                github_internal_echo "The last version of ${GITHUBSH_NAME} is ${HEAD_VERSION}."
+                _echo "Nothing to update." 32
+                _echo "The last version of ${GITHUBSH_NAME} is ${HEAD_VERSION}."
                 rm -f ${TEMPORARY}
                 exit 0
             fi
 
             if [ ! -w "${0}" ]
             then
-                github_internal_echo "You don't have permission to update ${GITHUBSH_NAME}." 31 1>&2
+                _echo "You don't have permission to update ${GITHUBSH_NAME}." 31 1>&2
                 rm -f ${TEMPORARY}
                 exit 3
             fi
 
             mv ${TEMPORARY} "${0}"
-            github_internal_echo "Successfully updated of ${GITHUBSH_VERSION} to ${HEAD_VERSION}" 32
+            _echo "Successfully updated of ${GITHUBSH_VERSION} to ${HEAD_VERSION}" 32
             exit 0
 
         ;;
@@ -422,7 +422,7 @@ do
 
             if [ "${1}" != "" ]
             then
-                github_internal_echo "${GITHUBSH_HELP_MESSAGE}" 1>&2
+                _echo "${GITHUBSH_HELP_MESSAGE}" 1>&2
                 exit 2
             fi
 
@@ -434,4 +434,4 @@ do
 
 done
 
-github_shell
+_shell
