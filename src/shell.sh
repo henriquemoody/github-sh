@@ -29,7 +29,7 @@ _shell()
         case "${command_name}" in
 
             set | issue | exit | help | reload)
-                _external_${command_name} ${command_args}
+                _action_${command_name} ${command_args}
             ;;
 
             *)

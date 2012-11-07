@@ -1,5 +1,5 @@
 # Just for developers
-_external_reload()
+_action_reload()
 {
     clear && ${GITHUBSH_SOURCE}
 }

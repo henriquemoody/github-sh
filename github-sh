@@ -109,9 +109,9 @@ _set()
     return 0
 }
 
-_external_help()
+_action_help()
 {
-    local sub_help=_external_help_"${1}"
+    local sub_help=_action_help_"${1}"
 
     if [ ! -z "${2}" ]; then
         sub_help="${sub_help}_${2}"
@@ -124,14 +124,14 @@ _external_help()
     else
         _echo "GitHub Shell Help" 32
         _echo "
-    set     $(_external_help_set)
-    issue   $(_external_help_issue)"
+    set     $(_action_help_set)
+    issue   $(_action_help_issue)"
     fi
 
     _echo
     
 }
-_external_help_set()
+_action_help_set()
 {
     local title="Defines a value for an existent variable."
     if [ "${1}" == "--full" ]; then
@@ -146,7 +146,7 @@ _external_help_set()
         _echo "${title}"
     fi
 }
-_external_help_issue()
+_action_help_issue()
 {
     local title="Performs actions on issues."
     if [ "${1}" == "--full" ]; then
@@ -162,8 +162,8 @@ _external_help_issue()
         _echo "${title}"
     fi
 }
-# _external_issue ACTION NUMBER [ PROJECT [ USER ] ]
-_external_issue()
+# _action_issue ACTION NUMBER [ PROJECT [ USER ] ]
+_action_issue()
 {
     if [ -z "${1}" ]
     then
@@ -227,8 +227,8 @@ _external_issue()
 
 }
 
-# _external_issue_list [ PROJECT ]
-_external_issue_list()
+# _action_issue_list [ PROJECT ]
+_action_issue_list()
 {
     local project="${1}"
     local url="https://api.github.com/repos"
@@ -265,8 +265,8 @@ _external_issue_list()
         done
 }
 
-# _external_set VAR [ VALUE ]
-_external_set()
+# _action_set VAR [ VALUE ]
+_action_set()
 {
     if [ -z "${1}" ]
     then
@@ -290,15 +290,15 @@ _external_set()
         && _echo "Value of \"${1}\" defined with sucess.\n" 32
 }
 
-# _external_exit
-_external_exit()
+# _action_exit
+_action_exit()
 {
     _echo "Bye!"
     exit 0
 }
 
 # Just for developers
-_external_reload()
+_action_reload()
 {
     clear && ${GITHUBSH_SOURCE}
 }
@@ -335,7 +335,7 @@ _shell()
         case "${command_name}" in
 
             set | issue | exit | help | reload)
-                _external_${command_name} ${command_args}
+                _action_${command_name} ${command_args}
             ;;
 
             *)
@@ -370,7 +370,7 @@ do
             do
                 key="$(echo ${line} | cut -d '=' -f 1)"
                 value="$(echo ${line} | cut -d '=' -f 2-)"
-                _external_set "${key}" "${value}"
+                _action_set "${key}" "${value}"
             done
 
         ;;

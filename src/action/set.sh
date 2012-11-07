@@ -1,5 +1,5 @@
-# _external_set VAR [ VALUE ]
-_external_set()
+# _action_set VAR [ VALUE ]
+_action_set()
 {
     if [ -z "${1}" ]; then
         _echo -n '[34]username[0]: '

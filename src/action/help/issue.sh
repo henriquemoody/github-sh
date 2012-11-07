@@ -1,4 +1,4 @@
-_external_help_issue()
+_action_help_issue()
 {
     local title="Performs actions on issues."
     if [ "${1}" == "--full" ]; then

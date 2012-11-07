@@ -1,5 +1,5 @@
-# _external_issue ACTION NUMBER [ PROJECT [ USER ] ]
-_external_issue()
+# _action_issue ACTION NUMBER [ PROJECT [ USER ] ]
+_action_issue()
 {
     if [ -z "${1}" ]; then
         _echo "You should define a issue action. (See \"help\" for more information)" 31 1>&2

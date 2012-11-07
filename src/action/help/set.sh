@@ -1,4 +1,4 @@
-_external_help_set()
+_action_help_set()
 {
     local title="Defines a value for an existent variable."
     if [ "${1}" == "--full" ]; then

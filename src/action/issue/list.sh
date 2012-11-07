@@ -1,5 +1,5 @@
-# _external_issue_list [ PROJECT ]
-_external_issue_list()
+# _action_issue_list [ PROJECT ]
+_action_issue_list()
 {
     local project="${1}"
     local url="https://api.github.com/repos"
