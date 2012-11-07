@@ -2,12 +2,12 @@
 _action_issue()
 {
     if [ -z "${1}" ]; then
-        _echo "You should define a issue action. (See \"help\" for more information)" 31 1>&2
+        _echo '[31]You should define a issue action. (See "help list" for more information)'
         return 2
     fi
 
     if [ -z "${2}" ]; then
-        _echo "You should define a issue number. (See \"help\" for more information)" 31 1>&2
+        _echo '[31]You should define a issue number. (See "help list" for more information)'
         return 3
     fi
 
