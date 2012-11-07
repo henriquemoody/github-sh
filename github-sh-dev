@@ -48,14 +48,14 @@ fi
 
 source "${GITHUBSH_BASE_DIRECTORY}/src/echo.sh"
 source "${GITHUBSH_BASE_DIRECTORY}/src/set.sh"
-source "${GITHUBSH_BASE_DIRECTORY}/src/external/help.sh"
-source "${GITHUBSH_BASE_DIRECTORY}/src/external/help/set.sh"
-source "${GITHUBSH_BASE_DIRECTORY}/src/external/help/issue.sh"
-source "${GITHUBSH_BASE_DIRECTORY}/src/external/issue.sh"
-source "${GITHUBSH_BASE_DIRECTORY}/src/external/issue/list.sh"
-source "${GITHUBSH_BASE_DIRECTORY}/src/external/set.sh"
-source "${GITHUBSH_BASE_DIRECTORY}/src/external/exit.sh"
-source "${GITHUBSH_BASE_DIRECTORY}/src/external/reload.sh"
+source "${GITHUBSH_BASE_DIRECTORY}/src/action/help.sh"
+source "${GITHUBSH_BASE_DIRECTORY}/src/action/help/set.sh"
+source "${GITHUBSH_BASE_DIRECTORY}/src/action/help/issue.sh"
+source "${GITHUBSH_BASE_DIRECTORY}/src/action/issue.sh"
+source "${GITHUBSH_BASE_DIRECTORY}/src/action/issue/list.sh"
+source "${GITHUBSH_BASE_DIRECTORY}/src/action/set.sh"
+source "${GITHUBSH_BASE_DIRECTORY}/src/action/exit.sh"
+source "${GITHUBSH_BASE_DIRECTORY}/src/action/reload.sh"
 source "${GITHUBSH_BASE_DIRECTORY}/src/shell.sh"
 
 while [ "${1}" != "" ]; do
