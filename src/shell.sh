@@ -1,15 +1,15 @@
 # _shell
 _shell()
 {
-    if [ -f "${GITHUBSH_HISTORY}" ]; then
-        history -r "${GITHUBSH_HISTORY}"
+    if [ -f "${SCRIPT_HISTORY}" ]; then
+        history -r "${SCRIPT_HISTORY}"
     else
-        touch "${GITHUBSH_HISTORY}"
+        touch "${SCRIPT_HISTORY}"
     fi
 
-    _echo "[32]Welcome to Github Shell[0] - [34]${GITHUBSH_VERSION}[0]" ""
+    _title "Welcome to ${SCRIPT_TITLE} - ${SCRIPT_VERSION}"
 
-    history -r "${GITHUBSH_HISTORY}"
+    history -r "${SCRIPT_HISTORY}"
 
     while read -e -p "${GITHUB_PROMPT}" input; do
 
@@ -29,7 +29,7 @@ _shell()
         case "${command_name}" in
 
             set | issue | exit | help | reload)
-                _action_${command_name} ${command_args}
+                _command_${command_name} ${command_args}
             ;;
 
             *)
@@ -39,7 +39,7 @@ _shell()
 
         esac
 
-        history -w "${GITHUBSH_HISTORY}"
+        history -w "${SCRIPT_HISTORY}"
 
     done
 

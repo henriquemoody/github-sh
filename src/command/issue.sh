@@ -1,5 +1,5 @@
-# _action_issue ACTION NUMBER [ PROJECT [ USER ] ]
-_action_issue()
+# _command_issue ACTION NUMBER [ REPOSITORY [ USER ] ]
+_command_issue()
 {
     if [ -z "${1}" ]; then
         _echo '[31]You should define a issue action. (See "help list" for more information)'
@@ -13,28 +13,28 @@ _action_issue()
 
     local action="${1}"
     local number="${2}"
-    local project="${3}"
+    local repository="${3}"
     local user="${4}"
     local extra_param=""
     local url
 
-    if [ -z "${project}" ]; then
-        if [ -z "${GITHUB_PROJECT}" ]; then
-            read -e -p "Project name: " project
+    if [ -z "${repository}" ]; then
+        if [ -z "${GITHUB_REPOSITORY}" ]; then
+            read -e -p "Project name: " repository
         else
-            project="${GITHUB_PROJECT}"
+            repository="${GITHUB_REPOSITORY}"
         fi
     fi
 
     if [ -z "${user}" ]; then
         if [ -z "${GITHUB_USERNAME}" ]; then
-            read -e -p "User or Organization: " project
+            read -e -p "User or Organization: " repository
         else
             user="${GITHUB_USERNAME}"
         fi
     fi
 
-    url="https://api.github.com/repos/${user}/${project}/issues/${number}/comments"
+    url="https://api.github.com/repos/${user}/${repository}/issues/${number}/comments"
 
     if [ "${GITHUB_USERNAME}" != "" ]; then
         extra_param="${GITHUB_USERNAME}"

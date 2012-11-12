@@ -21,8 +21,8 @@ _set()
             GITHUB_PASSWORD="${value}"
         ;;
 
-        project)
-            GITHUB_PROJECT="${value}"
+        repository)
+            GITHUB_REPOSITORY="${value}"
         ;;
 
         *)
@@ -31,11 +31,18 @@ _set()
 
     esac
 
-    GITHUB_PROMPT="${GITHUBSH_PROMPT}"
-    if [ ! -z "${GITHUB_PROJECT}" ]; then
-        GITHUB_PROMPT="${GITHUB_PROMPT}/${GITHUB_PROJECT}"
+    GITHUB_PROMPT="${SCRIPT_PROMPT}"
+    if [ -z "${GITHUB_USERNAME}" ]; then
+        GITHUB_PROMPT="${GITHUB_PROMPT}:**"
+    else
+        GITHUB_PROMPT="${GITHUB_PROMPT}:${GITHUB_USERNAME}"
     fi
-    GITHUB_PROMPT="${GITHUB_PROMPT}${GITHUBSH_PROMPT_CHAR}"
+
+    if [ ! -z "${GITHUB_REPOSITORY}" ]; then
+        GITHUB_PROMPT="${GITHUB_PROMPT}/${GITHUB_REPOSITORY}"
+    fi
+
+    GITHUB_PROMPT="${GITHUB_PROMPT}${SCRIPT_PROMPT_CHAR}"
 
     return 0
 }

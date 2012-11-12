@@ -1,17 +1,17 @@
-# _action_issue_list [ PROJECT ]
-_action_issue_list()
+# _command_issue_list [ REPOSITORY ]
+_command_issue_list()
 {
-    local project="${1}"
+    local repository="${1}"
     local url="https://api.github.com/repos"
-    if [ -z "${project}" ]; then
-        if [ -z "${GITHUB_PROJECT}" ]; then
-            read -e -p "Project name: " project
+    if [ -z "${repository}" ]; then
+        if [ -z "${GITHUB_REPOSITORY}" ]; then
+            read -e -p "Project name: " repository
         else
-            project="${GITHUB_PROJECT}"
+            repository="${GITHUB_REPOSITORY}"
         fi
     fi
 
-    url="${url}/${project}/issues"
+    url="${url}/${repository}/issues"
 
     if [ "${GITHUB_USERNAME}" != "" ]; then
         extra_param="${GITHUB_USERNAME}"

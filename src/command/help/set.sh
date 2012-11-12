@@ -1,4 +1,4 @@
-_action_help_set()
+_command_help_set()
 {
     local title="Defines a value for an existent variable."
     if [ "${1}" == "--full" ]; then
@@ -8,7 +8,7 @@ _action_help_set()
         _echo "[34]Existent variables[0]\n"
         _echo "  user      : Your GitHub username."
         _echo "  password  : Your GitHub password."
-        _echo "  project   : Current GitHub project."
+        _echo "  repository   : Current GitHub repository."
     else
         _echo "${title}"
     fi

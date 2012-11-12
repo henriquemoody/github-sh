@@ -1,137 +1,144 @@
 #!/usr/bin/env bash
-# Interactive Github Shell.
+# Description
+# ===========
+# An interactive shell for GitHub.
 # Copyright (C) 2012 Henrique Moody <henriquemoody@gmail.com>.
 #
 # Authors
 # =======
-#   Henrique Moody <henriquemoody@gmail.com>
+# Henrique Moody <henriquemoody@gmail.com>
 #
-# Changelog
-# =========
-#   0.1.3   Update help message.
-#   0.1.3   Update prompt with defined user data.
-#   0.1.2   Created OSX compatibility
-#   0.1.1   Update script structure
-#   0.1.0   Base script
+# Version
+# =======
+# 0.1.4   Mon Nov 12 15:39:56 BRST 2012
 #
+# Usage
+# =====
+#   -h, --help          Displays this help
+#   -v, --version       Displays the version of the program
+#   -s, --self-update   Self update script
+#   -u, --username      Defines the GitHub username
+#   -p, --password      Defines the GitHub password
+#   -r, --repository    Defines the GitHub repository
+#
+
+source "$(dirname "${0}")/src/echo.sh"
+source "$(dirname "${0}")/src/title.sh"
+source "$(dirname "${0}")/src/set.sh"
+source "$(dirname "${0}")/src/command/help.sh"
+source "$(dirname "${0}")/src/command/help/set.sh"
+source "$(dirname "${0}")/src/command/help/issue.sh"
+source "$(dirname "${0}")/src/command/issue.sh"
+source "$(dirname "${0}")/src/command/issue/list.sh"
+source "$(dirname "${0}")/src/command/set.sh"
+source "$(dirname "${0}")/src/command/exit.sh"
+source "$(dirname "${0}")/src/command/reload.sh"
+source "$(dirname "${0}")/src/shell.sh"
 
 # Readonly vars
-declare -r GITHUBSH_NAME=$(basename "${0}")
-declare -r GITHUBSH_SOURCE="${0}"
-declare -r GITHUBSH_DIRECTORY="${HOME}/.github-sh"
-declare -r GITHUBSH_HISTORY="${GITHUBSH_DIRECTORY}/history"
-declare -r GITHUBSH_BASE_DIRECTORY=$(dirname "${0}")
-declare -r GITHUBSH_DESCRIPTION=$(sed -n 2p "${0}" |  sed -E 's/^# ?//g')
-declare -r GITHUBSH_VERSION=$(sed -n 11p "${0}" | awk '{print $2}')
-declare -r GITHUBSH_PROMPT="github"
-declare -r GITHUBSH_PROMPT_CHAR="> "
-declare -r GITHUBSH_HELP="Usage: ${GITHUBSH_NAME} [OPTIONS]
-${GITHUBSH_DESCRIPTION}
+declare -r SCRIPT_BASENAME=$(basename "${0}")
+declare -r SCRIPT_REALPATH="$(realpath ${0})"
+declare -r SCRIPT_HISTORY="${HOME}/.githubsh_history"
+declare -r SCRIPT_HEADER="$(sed -n '2,/^$/p' "${SCRIPT_REALPATH}" | sed -E 's/^# ?//g;')"
+declare -r SCRIPT_TITLE="GitHub Shell"
+declare -r SCRIPT_DESCRIPTION=$(echo "${SCRIPT_HEADER}" | sed -n '/Description/,/^$/p' | sed -n '3,$p')
+declare -r SCRIPT_VERSION=$(echo "${SCRIPT_HEADER}" | sed -n '/Version/,/^$/p' | sed -n '3,$p' | awk '{print $1}')
+declare -r SCRIPT_COMMANDS="$(compgen -A 'function' | egrep '^_command_[a-z]+$' | cut -d _ -f 3)"
+declare -r SCRIPT_PROMPT="github"
+declare -r SCRIPT_PROMPT_CHAR="> "
+declare -r SCRIPT_HELP="Usage: ${SCRIPT_BASENAME} [OPTIONS]
+${SCRIPT_DESCRIPTION}
 
-    -h, --help      Displays this help.
-    -s, --set       Defines default values for variables (\"user\", \"password\", \"project\").
-    -v, --version   Displays the version of the program.
-    -u, --update    Self update ${GITHUBSH_NAME}.
+Options
+
+$(echo "${SCRIPT_HEADER}" | sed -n '/Usage/,/^$/p' | sed -n '3,$p')
+
+Commands
+
+$(echo "${SCRIPT_COMMANDS}" | sed -E 's/(.+)/  \1/g' | sort -r )
 
 Report bugs on https://github.com/henriquemoody/github-sh/issues."
 
 # Global vars
-declare GITHUB_PROMPT="${GITHUBSH_PROMPT}${GITHUBSH_PROMPT_CHAR}"
+declare GITHUB_PROMPT="${SCRIPT_PROMPT}${SCRIPT_PROMPT_CHAR}"
 declare GITHUB_USERNAME=""
 declare GITHUB_PASSWORD=""
-declare GITHUB_PROJECT=""
+declare GITHUB_REPOSITORY=""
 
-# Check github directory
-if [ ! -d "${GITHUBSH_DIRECTORY}" ]; then
-    mkdir -p "${GITHUBSH_DIRECTORY}"
-fi
-
-source "${GITHUBSH_BASE_DIRECTORY}/src/echo.sh"
-source "${GITHUBSH_BASE_DIRECTORY}/src/set.sh"
-source "${GITHUBSH_BASE_DIRECTORY}/src/action/help.sh"
-source "${GITHUBSH_BASE_DIRECTORY}/src/action/help/set.sh"
-source "${GITHUBSH_BASE_DIRECTORY}/src/action/help/issue.sh"
-source "${GITHUBSH_BASE_DIRECTORY}/src/action/issue.sh"
-source "${GITHUBSH_BASE_DIRECTORY}/src/action/issue/list.sh"
-source "${GITHUBSH_BASE_DIRECTORY}/src/action/set.sh"
-source "${GITHUBSH_BASE_DIRECTORY}/src/action/exit.sh"
-source "${GITHUBSH_BASE_DIRECTORY}/src/action/reload.sh"
-source "${GITHUBSH_BASE_DIRECTORY}/src/shell.sh"
-
-while [ "${1}" != "" ]; do
+while [ ! -z "${1}" ]; do
 
     case "${1}" in
 
-        -h | --help)
-
-            _echo "${GITHUBSH_HELP}"
-            exit 0
-
+        -u | --username)
+            _set username "${2}"
+            shift 2
         ;;
 
-        -s | --set)
+        -p | --password)
+            _set password "${2}"
+            shift 2
+        ;;
 
-            echo "${2}"  | tr ','  '\n' | while read line; do
-                key="$(echo ${line} | cut -d '=' -f 1)"
-                value="$(echo ${line} | cut -d '=' -f 2-)"
-                _action_set "${key}" "${value}"
-            done
+        -r | --repository)
+            _set repository "${2}"
+            shift 2
+        ;;
 
+        -h | --help)
+            _echo "${SCRIPT_HELP}"
+            exit 0
         ;;
 
         -V)
-
-            _echo "${GITHUBSH_VERSION}"
+            _echo "${SCRIPT_VERSION}"
             exit 0
-
         ;;
 
         -v | --version)
-
-            _echo "${GITHUBSH_NAME} version ${GITHUBSH_VERSION}"
-            _echo "${GITHUBSH_DESCRIPTION}"
+            version=$(echo "${SCRIPT_HEADER}" | sed -n '/Version/,/^$/p' | sed -n '3,$p')
+            _echo -n "[32]${SCRIPT_BASENAME}[0]: "
+            _echo "${version}"
             exit 0
-
         ;;
 
-        -u | --update)
-
-
+        -s | --self-update)
             TEMPORARY=/tmp/github-sh_$(date +%s)
             curl -L git.io/github-sh -o ${TEMPORARY}
             chmod +x ${TEMPORARY}
             HEAD_VERSION=$(${TEMPORARY} -V)
-            if [ "${HEAD_VERSION}" ==  "${GITHUBSH_VERSION}" ]; then
+            if [ "${HEAD_VERSION}" ==  "${SCRIPT_VERSION}" ]; then
                 _echo "Nothing to update." 32
-                _echo "The last version of ${GITHUBSH_NAME} is ${HEAD_VERSION}."
+                _echo "The last version of ${SCRIPT_BASENAME} is ${HEAD_VERSION}."
                 rm -f ${TEMPORARY}
                 exit 0
             fi
 
             if [ ! -w "${0}" ]; then
-                _echo "You don't have permission to update ${GITHUBSH_NAME}." 31 1>&2
+                _echo "You don't have permission to update ${SCRIPT_BASENAME}." 31 1>&2
                 rm -f ${TEMPORARY}
                 exit 3
             fi
 
             mv ${TEMPORARY} "${0}"
-            _echo "Successfully updated of ${GITHUBSH_VERSION} to ${HEAD_VERSION}" 32
+            _echo "Successfully updated of ${SCRIPT_VERSION} to ${HEAD_VERSION}" 32
             exit 0
-
         ;;
 
         *)
+            command_name=$(echo "${SCRIPT_COMMANDS}" | egrep "^${1}$");
+            if [ ! -z "${command_name}" ]; then
+                command_name="${1}"
+                shift 1
+                _command_${command_name} $@
+                exit
 
-            if [ "${1}" != "" ]; then
-                _echo "${GITHUBSH_HELP_MESSAGE}" 1>&2
+            else
+                _echo -e "${SCRIPT_HELP}"
                 exit 2
             fi
-
         ;;
 
     esac
-
-    shift 2
 
 done
 
