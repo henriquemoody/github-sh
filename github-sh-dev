@@ -37,7 +37,7 @@ source "$(dirname "${0}")/src/shell.sh"
 
 # Readonly vars
 declare -r SCRIPT_BASENAME=$(basename "${0}")
-declare -r SCRIPT_REALPATH="$(realpath ${0})"
+declare -r SCRIPT_REALPATH="$(realpath "${0}" 2>/dev/null || echo "${0}")"
 declare -r SCRIPT_HISTORY="${HOME}/.githubsh_history"
 declare -r SCRIPT_HEADER="$(sed -n '2,/^$/p' "${SCRIPT_REALPATH}" | sed -E 's/^# ?//g;')"
 declare -r SCRIPT_TITLE="GitHub Shell"

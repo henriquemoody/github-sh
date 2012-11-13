@@ -1,7 +1,7 @@
-Github Shell
+GitHub Shell
 ============
 
-Interactive shell for Github.
+Interactive shell for GitHub.
 
 How to install
 --------------
