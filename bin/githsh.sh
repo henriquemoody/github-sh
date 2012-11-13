@@ -22,20 +22,24 @@
 #   -r, --repository    Defines the GitHub repository
 #
 
-source "$(dirname "${0}")/src/api.sh"
-source "$(dirname "${0}")/src/echo.sh"
-source "$(dirname "${0}")/src/title.sh"
-source "$(dirname "${0}")/src/set.sh"
-source "$(dirname "${0}")/src/get.sh"
-source "$(dirname "${0}")/src/json/parse.sh"
-source "$(dirname "${0}")/src/json/sanitize.sh"
-source "$(dirname "${0}")/src/command/auth.sh"
-source "$(dirname "${0}")/src/command/issue.sh"
-source "$(dirname "${0}")/src/command/issue/list.sh"
-source "$(dirname "${0}")/src/command/set.sh"
-source "$(dirname "${0}")/src/command/exit.sh"
-source "$(dirname "${0}")/src/command/reload.sh"
-source "$(dirname "${0}")/src/shell.sh"
+source "$(dirname "${0}")/../src/api.sh"
+source "$(dirname "${0}")/../src/echo.sh"
+source "$(dirname "${0}")/../src/title.sh"
+source "$(dirname "${0}")/../src/set.sh"
+source "$(dirname "${0}")/../src/get.sh"
+source "$(dirname "${0}")/../src/json/parse.sh"
+source "$(dirname "${0}")/../src/json/sanitize.sh"
+source "$(dirname "${0}")/../src/command/auth.sh"
+source "$(dirname "${0}")/../src/command/help.sh"
+source "$(dirname "${0}")/../src/command/issue.sh"
+source "$(dirname "${0}")/../src/command/issue/list.sh"
+source "$(dirname "${0}")/../src/command/set.sh"
+source "$(dirname "${0}")/../src/command/exit.sh"
+source "$(dirname "${0}")/../src/command/reload.sh"
+source "$(dirname "${0}")/../src/shell.sh"
+
+MANPATH="$(realpath "$(dirname "${0}")/../man"):${MANPATH}"
+export MANPATH
 
 # Readonly vars
 declare -r SCRIPT_BASENAME=$(basename "${0}")
