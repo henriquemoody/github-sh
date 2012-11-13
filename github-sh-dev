@@ -22,6 +22,7 @@
 #   -r, --repository    Defines the GitHub repository
 #
 
+source "$(dirname "${0}")/src/api.sh"
 source "$(dirname "${0}")/src/echo.sh"
 source "$(dirname "${0}")/src/title.sh"
 source "$(dirname "${0}")/src/set.sh"
