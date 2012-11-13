@@ -3,6 +3,12 @@ _json_parse()
     local parent="${1}"
     local content="${2}"
 
+    if [ -f "${content}" ]; then
+        content=$(cat ${content})
+    elif [ -z "${content}" ]; then
+        content=$(cat /dev/stdin)
+    fi
+
     sub_pattern="(\"([^\"]+)\":(\{[^}]+\})),?"
 
     content=$(echo "${content}" | _json_sanitize)

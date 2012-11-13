@@ -15,8 +15,8 @@ _command_issue_list()
 
     if [ "${GITHUB_USERNAME}" != "" ]; then
         extra_param="${GITHUB_USERNAME}"
-        if [ "${GITHUB_PASSWORD}" != "" ]; then
-            extra_param="${extra_param}:${GITHUB_PASSWORD}"
+        if [ "${GITHUB_TOKEN}" != "" ]; then
+            extra_param="${extra_param}:${GITHUB_TOKEN}"
         fi
         extra_param="-u '${extra_param}'"
     fi

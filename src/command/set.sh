@@ -4,19 +4,19 @@ _command_set()
     if [ -z "${1}" ]; then
         _title "${SCRIPT_TITLE} Variables"
 
-        _echo -n '  * [34]username[0]   '
+        _echo -n '  * [34]Username[0]    '
         test "${GITHUB_USERNAME}" &&
             _echo "[32]${GITHUB_USERNAME}[0]" ||
             _echo '[31;3]NULL[0]'
 
-        _echo -n '  * [34]password[0]   '
-        test "${GITHUB_PASSWORD}" &&
-            _echo "[32]$(echo ${GITHUB_PASSWORD} | sed 's/./*/g')[0]" ||
-            _echo '[31;3]NULL[0]'
-
-        _echo -n '  * [34]repository[0] '
+        _echo -n '  * [34]Repository[0]  '
         test "${GITHUB_REPOSITORY}" &&
             _echo "[32]${GITHUB_REPOSITORY}[0]" ||
+            _echo '[31;3]NULL[0]'
+
+        _echo -n '  * [34]OAuth Token[0] '
+        test "${GITHUB_TOKEN}" &&
+            _echo "[32]${GITHUB_TOKEN}[0]" ||
             _echo '[31;3]NULL[0]'
 
         _echo

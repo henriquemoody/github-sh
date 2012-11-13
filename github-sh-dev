@@ -18,16 +18,17 @@
 #   -v, --version       Displays the version of the program
 #   -s, --self-update   Self update script
 #   -u, --username      Defines the GitHub username
-#   -p, --password      Defines the GitHub password
+#   -t, --token         Defines the GitHub OAuth token
 #   -r, --repository    Defines the GitHub repository
 #
 
 source "$(dirname "${0}")/src/echo.sh"
 source "$(dirname "${0}")/src/title.sh"
 source "$(dirname "${0}")/src/set.sh"
-source "$(dirname "${0}")/src/command/help.sh"
-source "$(dirname "${0}")/src/command/help/set.sh"
-source "$(dirname "${0}")/src/command/help/issue.sh"
+source "$(dirname "${0}")/src/get.sh"
+source "$(dirname "${0}")/src/json/parse.sh"
+source "$(dirname "${0}")/src/json/sanitize.sh"
+source "$(dirname "${0}")/src/command/auth.sh"
 source "$(dirname "${0}")/src/command/issue.sh"
 source "$(dirname "${0}")/src/command/issue/list.sh"
 source "$(dirname "${0}")/src/command/set.sh"
@@ -60,10 +61,16 @@ $(echo "${SCRIPT_COMMANDS}" | sed -E 's/(.+)/  \1/g' | sort -r )
 Report bugs on https://github.com/henriquemoody/github-sh/issues."
 
 # Global vars
+declare GITHUB_TOKEN
 declare GITHUB_PROMPT="${SCRIPT_PROMPT}${SCRIPT_PROMPT_CHAR}"
-declare GITHUB_USERNAME=""
-declare GITHUB_PASSWORD=""
-declare GITHUB_REPOSITORY=""
+declare GITHUB_USERNAME
+declare GITHUB_REPOSITORY
+
+for label in username token repository; do
+    if [[ ! -z "$(git config github.${label} 2> /dev/null)" ]]; then
+        _set ${label} "$(git config github.${label})" > /dev/null
+    fi
+done
 
 while [ ! -z "${1}" ]; do
 
@@ -74,13 +81,13 @@ while [ ! -z "${1}" ]; do
             shift 2
         ;;
 
-        -p | --password)
-            _set password "${2}"
+        -r | --repository)
+            _set repository "${2}"
             shift 2
         ;;
 
-        -r | --repository)
-            _set repository "${2}"
+        -t | --token)
+            _set token "${2}"
             shift 2
         ;;
 

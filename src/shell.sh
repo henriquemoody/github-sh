@@ -17,27 +17,18 @@ _shell()
             continue
         fi
 
-        command_name=$(echo "${input}" | awk '{print $1}')
-        if [ "$(echo "${input}" | wc -w | awk '{print $1}')" != 1 ]; then
-            command_args=$(echo "${input}" | cut -d ' ' -f 2-)
+        history -s "${input}"
+
+        set - ${input}
+        command_name=$(echo "${SCRIPT_COMMANDS}" | egrep "^${1}$");
+        if [ ! -z "${command_name}" ]; then
+            command_name="${1}"
+            shift 1
+            _command_${command_name} $@
         else
-            command_args=""
+            _echo -e "[31]Command \"${command_name}\" not found.[0]"
+            continue
         fi
-
-		history -s "${input}"
-
-        case "${command_name}" in
-
-            set | issue | exit | help | reload)
-                _command_${command_name} ${command_args}
-            ;;
-
-            *)
-                _echo -e "[31]Command \"${command_name}\" not found.[0]"
-                continue
-            ;;
-
-        esac
 
         history -w "${SCRIPT_HISTORY}"
 
