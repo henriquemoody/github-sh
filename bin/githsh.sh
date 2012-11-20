@@ -14,12 +14,24 @@
 #
 # Usage
 # =====
+#
+# Script options
+#
 #   -h, --help          Displays this help
 #   -v, --version       Displays the version of the program
 #   -s, --self-update   Self update script
 #   -u, --username      Defines the GitHub username
 #   -t, --token         Defines the GitHub OAuth token
 #   -r, --repository    Defines the GitHub repository
+#
+# Available script actions
+#
+#   auth
+#   help
+#   issue
+#   set
+#
+# Report bugs on https://github.com/henriquemoody/github-sh/issues.
 #
 
 source "$(dirname "${0}")/../src/api.sh"
@@ -52,18 +64,10 @@ declare -r SCRIPT_VERSION=$(echo "${SCRIPT_HEADER}" | sed -n '/Version/,/^$/p' |
 declare -r SCRIPT_COMMANDS="$(compgen -A 'function' | egrep '^_command_[a-z]+$' | cut -d _ -f 3)"
 declare -r SCRIPT_PROMPT="github"
 declare -r SCRIPT_PROMPT_CHAR="> "
-declare -r SCRIPT_HELP="Usage: ${SCRIPT_BASENAME} [OPTIONS]
+declare -r SCRIPT_HELP="Usage: ${SCRIPT_BASENAME} [OPTIONS] [ACTION]
 ${SCRIPT_DESCRIPTION}
 
-Options
-
-$(echo "${SCRIPT_HEADER}" | sed -n '/Usage/,/^$/p' | sed -n '3,$p')
-
-Commands
-
-$(echo "${SCRIPT_COMMANDS}" | sed -E 's/(.+)/  \1/g' | sort -r )
-
-Report bugs on https://github.com/henriquemoody/github-sh/issues."
+$(echo "${SCRIPT_HEADER}" | sed -n '/Usage/,/^Report bugs/p' | sed -n '3,$p')"
 
 # Global vars
 declare GITHUB_TOKEN
